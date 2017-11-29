@@ -1,0 +1,39 @@
+{
+  "name": "flow-to-typescript",
+  "description": "Compile Flow to TypeScript",
+  "version": "1.0.0",
+  "main": "./dist/src/index.js",
+  "repository": "git@github.com:bcherny/flow-to-typescript.git",
+  "author": "Boris Cherny <bcherny@fb.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "pretest": "npm run build",
+    "tdd": "concurrently -k 'npm run build:watch' 'npm run test:watch'",
+    "test": "ava",
+    "test:watch": "ava -w"
+  },
+  "dependencies": {
+    "@babel/generator": "^7.0.0-beta.32",
+    "@types/babel-traverse": "^6.25.3",
+    "babel-traverse": "^6.26.0",
+    "babylon": "^6.18.0",
+    "mz": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/babel-generator": "^6.25.1",
+    "@types/babylon": "^6.16.2",
+    "@types/mz": "^0.0.32",
+    "ava": "^0.24.0",
+    "concurrently": "^3.5.1",
+    "flow-bin": "^0.59.0",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  },
+  "ava": {
+    "files": [
+      "./dist/test/test.js"
+    ]
+  }
+}
