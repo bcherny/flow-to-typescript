@@ -5,26 +5,35 @@ import { parse } from 'babylon'
 import { sync } from 'glob'
 import { dropWhile } from 'lodash'
 import { EOL } from 'os'
-import { resolve } from 'path'
+import { relative, resolve } from 'path'
 
-let rules = new Map<string, Visitor<Node>>()
+type Warning = [string, number, number]
+type Rule = (warnings: Warning[]) => Visitor<Node>
 
-export function addRule(ruleName: string, rule: Visitor<Node>) {
+let rules = new Map<string, Rule>()
+
+export function addRule(ruleName: string, rule: Rule) {
   if (rules.has(ruleName)) {
     throw `A rule with the name "${ruleName}" is already defined`
   }
   rules.set(ruleName, rule)
 }
 
-export async function compile(code: string) {
+export async function compile(code: string, filename: string) {
   let ast = parse(code, { plugins: ['flow', 'objectRestSpread'] })
 
   // load rules directory
   await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
 
+  let warnings: Warning[] = []
+
   rules.forEach((visitor, ruleName) => {
     console.info(`Applying rule: "${ruleName}"`)
-    traverse(ast, visitor)
+    traverse(ast, visitor(warnings))
+  })
+
+  warnings.forEach(([message, line, column]) => {
+    console.log(`Warning: ${message} (at ${relative(__dirname, filename)}: line ${line}, column ${column})`)
   })
 
   return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast), { retainLines: true }).code))

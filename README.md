@@ -49,5 +49,7 @@ Coming soon...
 |       | Subtype     | `$Subtype<A>`                           | `B extends A` |
 |       | Existential type | `*`                                | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/14466) |
 
+
 ✅ Done
-⚔ No Babylone support (yet)
+
+⚔ Babylon doesn't support it (yet)

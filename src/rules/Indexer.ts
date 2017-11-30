@@ -2,7 +2,7 @@ import { identifier, objectTypeIndexer } from 'babel-types'
 import { addRule } from '../'
 import { generateFreeIdentifier } from '../utils'
 
-addRule('Indexer', {
+addRule('Indexer', () => ({
   ObjectTypeIndexer(path) {
 
     if (path.node.id !== null) {
@@ -16,4 +16,4 @@ addRule('Indexer', {
     ))
 
   }
-})
+}))

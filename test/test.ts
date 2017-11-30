@@ -11,9 +11,10 @@ let folders = sync(resolve(__dirname, '../../test/cases/*/'))
 folders.forEach(folder =>
   test(basename(folder), async t => {
     try {
-      let input = await readFile(resolve(folder, 'input.js.flow'), 'utf-8')
+      let filein = resolve(folder, 'input.js.flow')
+      let input = await readFile(filein, 'utf-8')
       let output = await readFile(resolve(folder, 'output.ts'), 'utf-8')
-      t.is(await compile(input), output)
+      t.is(await compile(input, filein), output)
     } catch (e) {
       console.log('error', e)
     }

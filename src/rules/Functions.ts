@@ -2,7 +2,7 @@ import { functionTypeAnnotation, functionTypeParam, identifier } from 'babel-typ
 import { addRule } from '../'
 import { generateFreeIdentifier } from '../utils'
 
-addRule('Functions', {
+addRule('Functions', () => ({
   FunctionTypeAnnotation(path) {
 
     if (path.node.params.every(_ => _.name !== null)) {
@@ -20,4 +20,4 @@ addRule('Functions', {
     })
     path.replaceWith(functionTypeAnnotation(path.node.typeParameters, params, path.node.rest, path.node.returnType))
   }
-})
+}))

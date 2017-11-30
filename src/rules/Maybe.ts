@@ -1,7 +1,7 @@
 import { genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel-types'
 import { addRule } from '../'
 
-addRule('Maybe', {
+addRule('Maybe', () => ({
   NullableTypeAnnotation(path) {
     path.replaceWith(unionTypeAnnotation([
       (path.node as any).typeAnnotation,
@@ -9,4 +9,4 @@ addRule('Maybe', {
       genericTypeAnnotation(identifier('undefined'))
     ]))
   }
-})
+}))
