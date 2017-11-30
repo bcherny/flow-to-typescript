@@ -1,6 +1,10 @@
-# Flow-to-TypeScript
+# Flow-to-TypeScript [![Build Status][build]](https://circleci.com/gh/bcherny/flow-to-typescript) [![npm]](https://www.npmjs.com/package/flow-to-typescript) [![mit]](https://opensource.org/licenses/MIT)
 
-> Compile Flow to TypeScript
+[build]: https://img.shields.io/circleci/project/bcherny/flow-to-typescript.svg?branch=master&style=flat-square
+[npm]: https://img.shields.io/npm/v/flow-to-typescript.svg?style=flat-square
+[mit]: https://img.shields.io/npm/l/flow-to-typescript.svg?style=flat-square
+
+> Compile Flow files to TypeScript
 
 Coming soon...
 
