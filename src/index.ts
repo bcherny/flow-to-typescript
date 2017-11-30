@@ -1,6 +1,6 @@
 import generate from '@babel/generator'
 import traverse, { Node, Visitor } from 'babel-traverse'
-import { File, genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel-types'
+import { File, genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, objectTypeAnnotation, unionTypeAnnotation } from 'babel-types'
 import { parse } from 'babylon'
 import { dropWhile } from 'lodash'
 import { EOL } from 'os'
@@ -14,6 +14,12 @@ rules.set('Maybe', {
       nullLiteralTypeAnnotation(),
       genericTypeAnnotation(identifier('undefined'))
     ]))
+  }
+})
+
+rules.set('Mixed', {
+  MixedTypeAnnotation(path) {
+    path.replaceWith(objectTypeAnnotation([]))
   }
 })
 

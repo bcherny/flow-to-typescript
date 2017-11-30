@@ -16,7 +16,7 @@ Coming soon...
 |-------|-------------|-----------------------------------------|------------|
 |   ✅  | Maybe       | `?type` (NullableTypeAnnotation)        | `type | null | undefined` |
 |   ✅  | Undefined   | `void`                                  | `undefined` |
-|       | Mixed       | `mixed`                                 | `{}` |
+|   ✅  | Mixed       | `mixed`                                 | `{}` |
 |       | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
 |       | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |
 |       | Predicates (1) | `(a: A, b: B) => C %checks`          | `(a: A, b: B) => C` |
