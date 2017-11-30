@@ -7,7 +7,7 @@ import { dropWhile } from 'lodash'
 import { EOL } from 'os'
 import { relative, resolve } from 'path'
 
-type Warning = [string, number, number]
+type Warning = [string, string, number, number]
 type Rule = (warnings: Warning[]) => Visitor<Node>
 
 let rules = new Map<string, Rule>()
@@ -27,16 +27,15 @@ export async function compile(code: string, filename: string) {
 
   let warnings: Warning[] = []
 
-  rules.forEach((visitor, ruleName) => {
-    console.info(`Applying rule: "${ruleName}"`)
+  rules.forEach(visitor =>
     traverse(ast, visitor(warnings))
+  )
+
+  warnings.forEach(([message, issueURL, line, column]) => {
+    console.log(`Warning: ${message} (at ${relative(__dirname, filename)}: line ${line}, column ${column}). See ${issueURL}`)
   })
 
-  warnings.forEach(([message, line, column]) => {
-    console.log(`Warning: ${message} (at ${relative(__dirname, filename)}: line ${line}, column ${column})`)
-  })
-
-  return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast), { retainLines: true }).code))
+  return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code))
 }
 
 function stripAtFlowAnnotation(ast: File): File {

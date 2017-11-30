@@ -1,1 +1,2 @@
-type Indexer = { [a: string]: boolean };
+type Indexer = { [a: string]: boolean
+};
