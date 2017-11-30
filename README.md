@@ -15,7 +15,7 @@ Coming soon...
 | Done? |             | Flow                                    | TypeScript |
 |-------|-------------|-----------------------------------------|------------|
 |   ✅  | Maybe       | `?type` (NullableTypeAnnotation)        | `type | null | undefined` |
-|       | Undefined   | `void`                                  | `undefined` |
+|   ✅  | Undefined   | `void`                                  | `undefined` |
 |       | Mixed       | `mixed`                                 | `{}` |
 |       | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
 |       | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |

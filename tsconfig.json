@@ -11,9 +11,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
-    "preserveConstEnums": true,
+    "preserveConstEnums": false,
     "sourceMap": true,
-    "strictNullChecks": true,
-    "target": "es5"
+    "strict": true,
+    "target": "es2015"
   }
 }

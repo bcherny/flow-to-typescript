@@ -1,4 +1,4 @@
-function foo(x: string | null | undefined): string {
+function Maybe(x: string | null | undefined): string {
   if (x) {
     return x;
   }

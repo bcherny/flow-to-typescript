@@ -1,6 +1,6 @@
 import generate from '@babel/generator'
 import traverse, { Node, Visitor } from 'babel-traverse'
-import { genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel-types'
+import { File, genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel-types'
 import { parse } from 'babylon'
 import { dropWhile } from 'lodash'
 import { EOL } from 'os'
@@ -17,9 +17,24 @@ rules.set('Maybe', {
   }
 })
 
+rules.set('Undefined', {
+  VoidTypeAnnotation(path) {
+    path.replaceWith(genericTypeAnnotation(identifier('undefined')))
+  }
+})
+
 export function compile(code: string) {
   let ast = parse(code, { plugins: ['flow', 'objectRestSpread'] })
 
+  rules.forEach((visitor, ruleName) => {
+    console.info(`Applying rule: "${ruleName}"`)
+    traverse(ast, visitor)
+  })
+
+  return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast), { retainLines: true }).code))
+}
+
+function stripAtFlowAnnotation(ast: File): File {
   let { leadingComments } = ast.program.body[0]
   if (leadingComments) {
     let index = leadingComments.findIndex(_ => _.value.trim() === '@flow')
@@ -27,13 +42,7 @@ export function compile(code: string) {
       leadingComments.splice(index, 1)
     }
   }
-
-  rules.forEach((visitor, ruleName) => {
-    console.info(`Applying rule: "${ruleName}"`)
-    traverse(ast, visitor)
-  })
-
-  return addTrailingSpace(trimLeadingNewlines(generate(ast, { retainLines: true }).code))
+  return ast
 }
 
 function addTrailingSpace(file: string): string {
