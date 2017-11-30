@@ -18,9 +18,9 @@ Coming soon...
 |   ✅  | Undefined   | `void`                                  | `undefined` |
 |   ✅  | Mixed       | `mixed`                                 | `{}` |
 |   ✅  | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
-|       | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |
-|       | Predicates (1) | `(a: A, b: B) => C %checks`          | `(a: A, b: B) => C` |
-|       | Exact types | `{| a: A |}`                            | `{ a: A }` (not expressible) |
+|   ⚔  | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |
+|   ⚔  | Predicates (1) | `(a: A, b: B) => C %checks`          | `(a: A, b: B) => C` |
+|   ✅  | Exact types | `{| a: A |}`                            | `{ a: A }` (not expressible) |
 |       | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
 |       | Opaque types | `opaque type A = B`                    | `type A = B` (not expressible) |
 |       | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
@@ -48,3 +48,6 @@ Coming soon...
 |       | Supertype   | `$Supertype<A>`                         | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/14520) |
 |       | Subtype     | `$Subtype<A>`                           | `B extends A` |
 |       | Existential type | `*`                                | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/14466) |
+
+✅ Done
+⚔ No Babylone support (yet)
