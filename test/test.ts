@@ -13,7 +13,7 @@ folders.forEach(folder =>
     try {
       let input = await readFile(resolve(folder, 'input.js.flow'), 'utf-8')
       let output = await readFile(resolve(folder, 'output.ts'), 'utf-8')
-      t.is(compile(input), output)
+      t.is(await compile(input), output)
     } catch (e) {
       console.log('error', e)
     }
