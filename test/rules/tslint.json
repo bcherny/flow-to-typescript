@@ -21,7 +21,7 @@
       true
     ],
     "no-debugger": true,
-    "no-default-export": true,
+    "no-default-export": false,
     "no-duplicate-key": true,
     "no-duplicate-variable": true,
     "no-eval": true,

@@ -20,7 +20,7 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  let ast = parse(code, { plugins: ['flow', 'objectRestSpread'] })
+  let ast = parse(code, { plugins: ['flow', 'objectRestSpread'], sourceType: 'module' })
 
   // load rules directory
   await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
