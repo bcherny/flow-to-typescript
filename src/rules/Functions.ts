@@ -1,5 +1,6 @@
 import { functionTypeAnnotation, functionTypeParam, identifier } from 'babel-types'
 import { addRule } from '../'
+import { generateFreeIdentifier } from '../utils'
 
 addRule('Functions', {
   FunctionTypeAnnotation(path) {
@@ -20,9 +21,3 @@ addRule('Functions', {
     path.replaceWith(functionTypeAnnotation(path.node.typeParameters, params, path.node.rest, path.node.returnType))
   }
 })
-
-const candidates = 'abcdefghijklmnopqrstuvwxyz'.split('')
-
-function generateFreeIdentifier(usedParamNames: string[]) {
-  return candidates.find(_ => usedParamNames.indexOf(_) < 0)!
-}

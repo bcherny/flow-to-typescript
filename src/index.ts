@@ -10,6 +10,9 @@ import { resolve } from 'path'
 let rules = new Map<string, Visitor<Node>>()
 
 export function addRule(ruleName: string, rule: Visitor<Node>) {
+  if (rules.has(ruleName)) {
+    throw `A rule with the name "${ruleName}" is already defined`
+  }
   rules.set(ruleName, rule)
 }
 

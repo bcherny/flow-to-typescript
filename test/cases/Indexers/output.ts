@@ -1,0 +1,1 @@
+type Indexer = { [a: string]: boolean };

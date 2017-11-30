@@ -21,7 +21,7 @@ Coming soon...
 |   ⚔  | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |
 |   ⚔  | Predicates (1) | `(a: A, b: B) => C %checks`          | `(a: A, b: B) => C` |
 |   ✅  | Exact types | `{| a: A |}`                            | `{ a: A }` (not expressible) |
-|       | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
+|   ✅  | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
 |       | Opaque types | `opaque type A = B`                    | `type A = B` (not expressible) |
 |       | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
 |       | Bounds      | `<A: string>`                           | `<A extends string>` |
