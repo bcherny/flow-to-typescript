@@ -35,7 +35,7 @@ Coming soon...
 |-------|-------------|-----------------------------------------|------------|
 |       | Keys        | `$Keys<A>`                              | `keyof A` |
 |       | Values      | `$Values<A>`                            | `A[keyof A]` |
-|       | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
+|   ✅  | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
 |       | Exact       | `$Exact<A>`                             | `A` |
 |       | Difference  | `$Diff<A, B>`                           | `A | B` |
 |       | Rest        | `$Rest<A, B>`                           | TODO |
