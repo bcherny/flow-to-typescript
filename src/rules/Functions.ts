@@ -1,4 +1,4 @@
-import { functionTypeAnnotation, functionTypeParam, identifier } from 'babel-types'
+import { functionTypeAnnotation, functionTypeParam, identifier } from 'babel/packages/babel-types'
 import { addRule } from '../'
 import { generateFreeIdentifier } from '../utils'
 

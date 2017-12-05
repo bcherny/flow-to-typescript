@@ -1,4 +1,4 @@
-import { genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel-types'
+import { genericTypeAnnotation, identifier, nullLiteralTypeAnnotation, unionTypeAnnotation } from 'babel/packages/babel-types'
 import { addRule } from '../'
 
 addRule('Maybe', () => ({

@@ -16,9 +16,9 @@
     "test:watch": "ava -w"
   },
   "dependencies": {
+    "babel": "bcherny/babel",
     "babel-generator": "^6.26.0",
     "babel-traverse": "^6.26.0",
-    "babel-types": "^6.26.0",
     "babylon": "^6.18.0",
     "glob": "^7.1.2",
     "lodash": "^4.17.4",
@@ -27,7 +27,6 @@
   "devDependencies": {
     "@types/babel-generator": "^6.25.1",
     "@types/babel-traverse": "^6.25.3",
-    "@types/babel-types": "^6.25.2",
     "@types/babylon": "^6.16.2",
     "@types/glob": "^5.0.33",
     "@types/lodash": "^4.14.86",

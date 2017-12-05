@@ -1,4 +1,4 @@
-import { importDeclaration } from 'babel-types'
+import { importDeclaration } from 'babel/packages/babel-types'
 import { addRule } from '../'
 
 addRule('ImportDefault', () => ({

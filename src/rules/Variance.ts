@@ -1,4 +1,4 @@
-import { objectTypeProperty } from 'babel-types'
+import { objectTypeProperty } from 'babel/packages/babel-types'
 import { addRule } from '../'
 
 addRule('Variance', warnings => ({
