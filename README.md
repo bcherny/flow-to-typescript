@@ -27,7 +27,7 @@ Coming soon...
 |   ⚔  | Bounds      | `<A: string>`                           | `<A extends string>` |
 |   ⚔  | Casting     | `(a: A)`                                | `(a as A)` |
 |   ✅  | Import default type | `import type A from './b'`          | `import A from './b'` |
-|       | Import named type | `import type { A } from './b'`          | `import { A } from './b'` |
+|   ✅  | Import named type | `import type { A } from './b'`          | `import { A } from './b'` |
 
 ### Utilities
 
@@ -35,8 +35,8 @@ Coming soon...
 |-------|-------------|-----------------------------------------|------------|
 |       | Keys        | `$Keys<A>`                              | `keyof A` |
 |       | Values      | `$Values<A>`                            | `A[keyof A]` |
-|       | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
-|       | Exact       | `$Exact<A>`                             | `A` |
+|   ✅  | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
+|   ✅  | Exact       | `$Exact<A>`                             | `A` |
 |       | Difference  | `$Diff<A, B>`                           | `A | B` |
 |       | Rest        | `$Rest<A, B>`                           | TODO |
 |       | Property type | `$PropertyType<T, k>`                 | `T[k]` |
