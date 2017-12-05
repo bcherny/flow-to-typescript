@@ -20,15 +20,9 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  let ast = parse(code, { plugins: ['flow', 'objectRestSpread'], sourceType: 'module' })
 
-  // load rules directory
-  await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
-
-  let warnings: Warning[] = []
-
-  rules.forEach(visitor =>
-    traverse(ast, visitor(warnings))
+  let [warnings, ast] = await convert(
+    parse(code, { plugins: ['flow', 'objectRestSpread'], sourceType: 'module' })
   )
 
   warnings.forEach(([message, issueURL, line, column]) => {
@@ -36,6 +30,22 @@ export async function compile(code: string, filename: string) {
   })
 
   return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code))
+}
+
+/**
+ * @internal
+ */
+export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
+
+  // load rules directory
+  await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
+
+  let warnings: Warning[] = []
+  rules.forEach(visitor =>
+    traverse(ast, visitor(warnings))
+  )
+
+  return [warnings, ast]
 }
 
 function stripAtFlowAnnotation(ast: File): File {
