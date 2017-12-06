@@ -7,6 +7,7 @@ import { compile } from '../src'
 // TODO: Why does glob catch tslint.json even with the trailing slash?
 let folders = sync(resolve(__dirname, '../../test/rules/*/'))
   .filter(_ => !_.endsWith('.json'))
+  .filter(_ => !basename(_).startsWith('_'))
 
 folders.forEach(folder =>
   test(basename(folder), async t => {
