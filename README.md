@@ -23,7 +23,7 @@ Coming soon...
 |   ✅  | Exact types | `{| a: A |}`                            | `{ a: A }` (not expressible) |
 |   ✅  | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
 |   ✅  | Opaque types | `opaque type A = B`                    | `type A = B` (not expressible) |
-|   ✅ [0] | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
+|   ✅  | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
 |   ✅  | Bounds      | `<A: string>`                           | `<A extends string>` |
 |   ✅  | Casting     | `(a: A)`                                | `(a as A)` |
 |   ✅  | Import default type | `import type A from './b'`          | `import A from './b'` |
@@ -53,5 +53,3 @@ Coming soon...
 ✅ Done
 
 ⚔ Babylon doesn't support it (yet)
-
-[0] Babylon doesn't support readonly TypeScript properties (yet)

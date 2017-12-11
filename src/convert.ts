@@ -1,4 +1,4 @@
-import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter, tSAsExpression } from 'babel/packages/babel-types/lib'
+import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSAsExpression, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
@@ -25,6 +25,12 @@ export function toTs(node: Flow): TSType {
     case 'UnionTypeAnnotation':
     case 'VoidTypeAnnotation':
       return toTsType(node)
+
+    case 'ObjectTypeProperty':
+      let _ = tSPropertySignature(node.key, tSTypeAnnotation(toTs(node.value)))
+      _.optional = node.optional
+      _.readonly = node.variance === 'minus'
+      return _
 
     case 'TypeCastExpression':
       return tSAsExpression(node.expression, toTs(node.typeAnnotation))
@@ -58,7 +64,6 @@ export function toTs(node: Flow): TSType {
     case 'TypeParameterInstantiation':
     case 'ObjectTypeCallProperty':
     case 'ObjectTypeIndexer':
-    case 'ObjectTypeProperty':
     case 'QualifiedTypeIdentifier':
       throw 'wut'
   }

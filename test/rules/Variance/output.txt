@@ -1,4 +1,3 @@
-interface Variance {
-  a: string,
-  b: number,
+interface Variance { a: string;,
+  readonly b: number;,
 }

@@ -1,4 +1,3 @@
-type Exact = {
-  a: number,
-  b: string,
+type Exact = { a: number;,
+  b: string;,
 };
