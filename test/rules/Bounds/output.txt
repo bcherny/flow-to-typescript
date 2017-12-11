@@ -1,1 +1,1 @@
-type Bounds<A extends string> = A
+type Bounds<A extends string> = A;

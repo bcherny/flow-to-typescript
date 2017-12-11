@@ -1,4 +1,4 @@
-import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSBooleanKeyword, tSExpressionWithTypeArguments, tSFunctionType, TSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword } from 'babel/packages/babel-types/lib'
+import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
@@ -26,10 +26,20 @@ export function toTs(node: Flow): TSType {
     case 'VoidTypeAnnotation':
       return toTsType(node)
 
-    case 'ClassImplements': return tSExpressionWithTypeArguments(
-      node.id,
-      node.typeParameters ? toTs(node.typeParameters) : undefined
-    )
+    case 'TypeParameterDeclaration':
+      let params = node.params.map(_ => {
+        let d = (_ as any as TypeParameter).default
+        let p = tSTypeParameter(
+          hasBound(_) ? toTsType(_.bound.typeAnnotation) : undefined,
+          d ? toTs(d) : undefined
+        )
+        p.name = _.name
+        return p
+      })
+
+      return tSTypeParameterDeclaration(params)
+
+    case 'ClassImplements':
     case 'ClassProperty':
     case 'DeclareClass':
     case 'DeclareFunction':
@@ -43,12 +53,12 @@ export function toTs(node: Flow): TSType {
     case 'InterfaceDeclaration':
     case 'TypeAlias':
     case 'TypeCastExpression':
-    case 'TypeParameterDeclaration':
     case 'TypeParameterInstantiation':
     case 'ObjectTypeCallProperty':
     case 'ObjectTypeIndexer':
     case 'ObjectTypeProperty':
     case 'QualifiedTypeIdentifier':
+      throw 'wut'
   }
 }
 
@@ -122,4 +132,12 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
   f.typeAnnotation = tSTypeAnnotation(toTsType(node.returnType))
 
   return f
+}
+
+function hasBound(node: Node): node is BoundedTypeParameter {
+  return isTypeParameter(node) && node.bound != null
+}
+
+interface BoundedTypeParameter extends TypeParameter {
+  bound: TypeAnnotation
 }

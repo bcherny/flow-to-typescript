@@ -1,6 +1,6 @@
-import { booleanLiteral, FlowTypeAnnotation, isTypeParameter, Node, tSAnyKeyword, tSArrayType, tSBooleanKeyword, tSLiteralType, tSTypeParameter, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
+import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
 import { addRule } from '../'
-import { toTsType } from '../convert'
+import { toTs } from '../convert'
 
 addRule('Bounds', () => ({
   TypeParameterDeclaration(path) {
@@ -9,16 +9,7 @@ addRule('Bounds', () => ({
       return
     }
 
-    let params = path.node.params.map(node => {
-      if (hasBound(node)) {
-        let a =
-        return tSTypeParameter(
-          toTsType(node.bound.typeAnnotation),
-          node.default ? toTsType(node.default) : null
-        )
-      }
-      return node
-    })
+    path.replaceWith(toTs(path.node as any))
   }
 }))
 

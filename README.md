@@ -24,7 +24,7 @@ Coming soon...
 |   ✅  | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
 |   ✅  | Opaque types | `opaque type A = B`                    | `type A = B` (not expressible) |
 |   ✅ [0] | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
-|   ⚔  | Bounds      | `<A: string>`                           | `<A extends string>` |
+|   ✅  | Bounds      | `<A: string>`                           | `<A extends string>` |
 |   ⚔  | Casting     | `(a: A)`                                | `(a as A)` |
 |   ✅  | Import default type | `import type A from './b'`          | `import A from './b'` |
 |   ✅  | Import named type | `import type { A } from './b'`          | `import { A } from './b'` |
