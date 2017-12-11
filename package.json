@@ -13,6 +13,9 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
+    "clean": "rm -rf ./dist",
+    "lint": "tslint src/**/*.ts",
+    "prepublishOnly": "npm run clean && npm run lint && npm run build -- -d",
     "pretest": "npm run build",
     "tdd": "concurrently -k 'npm run build:watch' 'npm run test:watch'",
     "test": "ava",
