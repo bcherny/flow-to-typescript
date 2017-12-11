@@ -20,6 +20,22 @@ npm install flow-to-typescript --save
 
 ## Usage
 
+### CLI
+
+```sh
+# Install globally
+yarn add --global flow-to-typescript
+
+# Compile a file (all of these are equivalent)
+flow2ts my/file.js.flow
+flow2ts my/file.js.flow my/file.ts
+flow2ts my/file.js.flow > my/file.ts
+flow2ts -i my/file.js.flow -o my/file.ts
+flow2ts --input my/file.js.flow --output my/file.ts
+```
+
+### Programmatic
+
 ```js
 import { compile } from 'flow-to-typescript'
 import { readFileSync, writeFileSync } from 'fs'

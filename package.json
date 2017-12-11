@@ -1,8 +1,12 @@
 {
   "name": "flow-to-typescript",
   "description": "Compile Flow to TypeScript",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "bin": {
+    "flow2ts": "dist/src/cli.js"
+  },
   "repository": "git@github.com:bcherny/flow-to-typescript.git",
   "author": "Boris Cherny <bcherny@fb.com>",
   "license": "MIT",
