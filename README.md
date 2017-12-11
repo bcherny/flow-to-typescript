@@ -6,7 +6,31 @@
 
 > Compile Flow files to TypeScript
 
-Coming soon...
+**In Pre-Alpha - contributions welcome.**
+
+## Installation
+
+```sh
+# Using Yarn:
+yarn add flow-to-typescript
+
+# Or, using NPM:
+npm install flow-to-typescript --save
+```
+
+## Usage
+
+```js
+import { compile } from 'flow-to-typescript'
+import { readFileSync, writeFileSync } from 'fs'
+
+let path = 'path/to/file.js.flow'
+let file = readFileSync(path, 'utf-8)
+
+compile(file, path).then(ts =>
+  writeFileSync('path/to/file.ts', ts)
+)
+```
 
 ## TypeScript vs. Flow
 
@@ -37,7 +61,7 @@ Coming soon...
 |       | Values      | `$Values<A>`                            | `A[keyof A]` |
 |   ✅  | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
 |   ✅  | Exact       | `$Exact<A>`                             | `A` |
-|       | Difference  | `$Diff<A, B>`                           | `A | B` |
+|       | Difference  | `$Diff<A, B>`                           | TODO |
 |       | Rest        | `$Rest<A, B>`                           | TODO |
 |       | Property type | `$PropertyType<T, k>`                 | `T[k]` |
 |       | Element type | `$ElementType<T, K>`                   | `T[k]` |
