@@ -1,0 +1,1 @@
+let Casting = (42 as number);

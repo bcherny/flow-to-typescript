@@ -1,4 +1,4 @@
-import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
+import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter, tSAsExpression } from 'babel/packages/babel-types/lib'
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
@@ -26,6 +26,9 @@ export function toTs(node: Flow): TSType {
     case 'VoidTypeAnnotation':
       return toTsType(node)
 
+    case 'TypeCastExpression':
+      return tSAsExpression(node.expression, toTs(node.typeAnnotation))
+
     case 'TypeParameterDeclaration':
       let params = node.params.map(_ => {
         let d = (_ as any as TypeParameter).default
@@ -52,7 +55,6 @@ export function toTs(node: Flow): TSType {
     case 'InterfaceExtends':
     case 'InterfaceDeclaration':
     case 'TypeAlias':
-    case 'TypeCastExpression':
     case 'TypeParameterInstantiation':
     case 'ObjectTypeCallProperty':
     case 'ObjectTypeIndexer':
