@@ -1,3 +1,1 @@
-declare module '@babel/generator'
-
-declare module '@babel/traverse'
+declare module 'stdin'
