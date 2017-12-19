@@ -9,7 +9,7 @@ addRule('Bounds', () => ({
       return
     }
 
-    path.replaceWith(toTs(path.node as any))
+    path.replaceWith(toTs(path.node))
   }
 }))
 

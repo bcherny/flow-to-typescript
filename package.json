@@ -23,22 +23,15 @@
     "test:watch": "ava -w"
   },
   "dependencies": {
-    "@babel/generator": "^7.0.0-beta.34",
-    "@babel/traverse": "^7.0.0-beta.34",
     "babel": "bcherny/babel",
-    "babel-generator": "^6.26.0",
-    "babel-traverse": "^6.26.0",
-    "babylon": "^6.18.0",
     "glob": "^7.1.2",
     "lodash": "^4.17.4",
     "mz": "^2.7.0"
   },
   "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babel-traverse": "^6.25.3",
-    "@types/babylon": "^6.16.2",
     "@types/glob": "^5.0.33",
     "@types/lodash": "^4.14.86",
+    "@types/minimist": "^1.2.0",
     "@types/mz": "^0.0.32",
     "ava": "^0.24.0",
     "concurrently": "^3.5.1",
