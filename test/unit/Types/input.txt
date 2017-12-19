@@ -1,0 +1,18 @@
+/* @flow */
+
+type A = void
+type B = null
+type C = boolean
+type D = number
+type E = string
+type F = ?string
+type G = {
+  a: number
+}
+type H = {
+  a: number,
+  b: ?string
+}
+type I = {
+  a<T>(b: T): T;
+}

@@ -13,6 +13,7 @@ export function toTs(node: Flow): TSType {
     case 'IntersectionTypeAnnotation':
     case 'MixedTypeAnnotation':
     case 'NullableTypeAnnotation':
+    case 'NullLiteralTypeAnnotation':
     case 'NumericLiteralTypeAnnotation':
     case 'NumberTypeAnnotation':
     case 'StringLiteralTypeAnnotation':
@@ -29,7 +30,7 @@ export function toTs(node: Flow): TSType {
     case 'ObjectTypeProperty':
       let _ = tSPropertySignature(node.key, tSTypeAnnotation(toTs(node.value)))
       _.optional = node.optional
-      _.readonly = node.variance === 'minus'
+      _.readonly = node.variance && node.variance.kind === 'minus'
       return _
 
     case 'TypeCastExpression':
@@ -79,6 +80,7 @@ export function toTsType(node: FlowTypeAnnotation): TSType {
     case 'GenericTypeAnnotation': return tSTypeReference(node.id)
     case 'IntersectionTypeAnnotation': return tSIntersectionType(node.types.map(toTsType))
     case 'MixedTypeAnnotation': return tSAnyKeyword()
+    case 'NullLiteralTypeAnnotation': return tSNullKeyword()
     case 'NullableTypeAnnotation': return tSUnionType([toTsType(node.typeAnnotation), tSNullKeyword(), tSUndefinedKeyword()])
     case 'NumericLiteralTypeAnnotation': return tSLiteralType(numericLiteral(node.value))
     case 'NumberTypeAnnotation': return tSNumberKeyword()
@@ -114,8 +116,15 @@ function getId(node: FlowTypeAnnotation): Identifier {
 
 function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
 
-  // TODO: Type bounds, defaults
-  let f = tSFunctionType(node.typeParameters)
+  let f = tSFunctionType(tSTypeParameterDeclaration(
+    node.typeParameters.params.map(_ => {
+      let bound = _.bound ? toTs(_.bound) : undefined
+      let default_ = _.default ? toTs(_.default) : undefined
+      let param = tSTypeParameter(bound, default_)
+      param.name = _.name
+      return param
+    })
+  ))
 
   // Params
   // TODO: Rest params
@@ -130,7 +139,7 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     }
 
     let id = identifier(_.name.name || name)
-    // id.type = toTsType(_.typeAnnotation) // TODO
+    id.typeAnnotation = toTs(_.typeAnnotation) // TODO
 
     return id
   })

@@ -4,7 +4,7 @@ import { readFile } from 'mz/fs'
 import { basename, resolve } from 'path'
 import { compile } from '../src'
 
-let paths = ['e2e', 'rules']
+let paths = ['e2e', 'rules', 'unit']
 
 paths.forEach(path => {
   // TODO: Why does glob catch tslint.json even with the trailing slash?

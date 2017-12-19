@@ -22,7 +22,7 @@ export function addRule(ruleName: string, rule: Rule) {
 export async function compile(code: string, filename: string) {
 
   let [warnings, ast] = await convert(
-    parse(code, { plugins: ['flow', 'objectRestSpread'], sourceType: 'module' })
+    parse(code, { plugins: ['classProperties', 'flow', 'objectRestSpread'], sourceType: 'module' })
   )
 
   warnings.forEach(([message, issueURL, line, column]) => {
