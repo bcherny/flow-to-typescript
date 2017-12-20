@@ -2,8 +2,45 @@ import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Ident
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
-export function toTs(node: Flow): TSType {
+export function toTs(node: Flow | TSType): TSType {
   switch (node.type) {
+
+    // TS types
+    // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
+    case 'TSAnyKeyword':
+    case 'TSArrayType':
+    case 'TSBooleanKeyword':
+    case 'TSConstructorType':
+    case 'TSExpressionWithTypeArguments':
+    case 'TSFunctionType':
+    case 'TSIndexedAccessType':
+    case 'TSIntersectionType':
+    case 'TSLiteralType':
+    case 'TSMappedType':
+    case 'TSNeverKeyword':
+    case 'TSNullKeyword':
+    case 'TSNumberKeyword':
+    case 'TSObjectKeyword':
+    case 'TSParenthesizedType':
+    case 'TSStringKeyword':
+    case 'TSSymbolKeyword':
+    case 'TSThisType':
+    case 'TSTupleType':
+    case 'TSTypeAnnotation':
+    case 'TSTypeLiteral':
+    case 'TSTypeOperator':
+    case 'TSTypePredicate':
+    case 'TSTypeQuery':
+    case 'TSTypeReference':
+    case 'TSUndefinedKeyword':
+    case 'TSUnionType':
+    case 'TSVoidKeyword':
+    case 'TSTypeParameterDeclaration':
+    case 'TSAsExpression':
+    case 'TSPropertySignature':
+      return node
+
+    // Flow types
     case 'AnyTypeAnnotation':
     case 'ArrayTypeAnnotation':
     case 'BooleanTypeAnnotation':
@@ -89,7 +126,7 @@ export function toTsType(node: FlowTypeAnnotation): TSType {
     case 'ThisTypeAnnotation': return tSThisType()
     case 'TupleTypeAnnotation': return tSTupleType(node.types.map(toTsType))
     case 'TypeofTypeAnnotation': return tSTypeQuery(getId(node.argument))
-    case 'TypeAnnotation': return toTsType(node.typeAnnotation)
+    case 'TypeAnnotation': return tSTypeAnnotation(toTsType(node.typeAnnotation))
     case 'ObjectTypeAnnotation': return tSTypeLiteral([
       ...node.properties.map(_ => {
       let s = tSPropertySignature(_.key, tSTypeAnnotation(toTsType(_.value)))
@@ -116,8 +153,10 @@ function getId(node: FlowTypeAnnotation): Identifier {
 
 function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
 
-  let f = tSFunctionType(tSTypeParameterDeclaration(
-    node.typeParameters.params.map(_ => {
+  let typeParams = undefined
+
+  if (node.typeParameters) {
+    typeParams = tSTypeParameterDeclaration(node.typeParameters.params.map(_ => {
 
       // TODO: How is this possible?
       if (isTSTypeParameter(_)) {
@@ -129,29 +168,38 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
       let param = tSTypeParameter(constraint, default_)
       param.name = _.name
       return param
-    })
-  ))
+    }))
+  }
+
+  let f = tSFunctionType(typeParams)
 
   // Params
-  // TODO: Rest params
-  let paramNames = node.params.map(_ => _.name).filter(_ => _ !== null).map(_ => _.name)
-  f.parameters = node.params.map(_ => {
-    let name = _.name.name
+  if (node.params) {
+    // TODO: Rest params
+    let paramNames = node.params.map(_ => _.name).filter(_ => _ !== null).map(_ => (_ as Identifier).name)
+    f.parameters = node.params.map(_ => {
+      let name = _.name && _.name.name
 
-    // Generate param name? (Required in TS, optional in Flow)
-    if (name == null) {
-      name = generateFreeIdentifier(paramNames)
-      paramNames.push(name)
-    }
+      // Generate param name? (Required in TS, optional in Flow)
+      if (name == null) {
+        name = generateFreeIdentifier(paramNames)
+        paramNames.push(name)
+      }
 
-    let id = identifier(_.name.name || name)
-    id.typeAnnotation = tSTypeAnnotation(toTsType(_.typeAnnotation))
+      let id = identifier(name)
 
-    return id
-  })
+      if (_.typeAnnotation) {
+        id.typeAnnotation = tSTypeAnnotation(toTsType(_.typeAnnotation))
+      }
+
+      return id
+    })
+  }
 
   // Return type
-  f.typeAnnotation = tSTypeAnnotation(toTsType(node.returnType))
+  if (node.returnType) {
+    f.typeAnnotation = tSTypeAnnotation(toTsType(node.returnType))
+  }
 
   return f
 }

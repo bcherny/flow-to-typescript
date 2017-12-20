@@ -18,7 +18,7 @@
     "prepublishOnly": "npm run clean && npm run lint && npm run build -- -d",
     "pretest": "npm run build",
     "tdd": "concurrently -k 'npm run build:watch' 'npm run test:watch'",
-    "test": "ava",
+    "test": "ava --verbose",
     "test:debug": "node --inspect-brk ./node_modules/ava/profile.js ./dist/test/test.js",
     "test:watch": "ava -w"
   },
