@@ -1,4 +1,4 @@
-import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSAsExpression, tSBooleanKeyword, TSFunctionType, tSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
+import { booleanLiteral, Flow, FlowTypeAnnotation, FunctionTypeAnnotation, Identifier, identifier, isTSTypeParameter, isTypeParameter, Node, numericLiteral, stringLiteral, tSAnyKeyword, tSArrayType, tSAsExpression, tSBooleanKeyword, tSFunctionType, TSFunctionType, tSIntersectionType, tSLiteralType, tSNullKeyword, tSNumberKeyword, tSPropertySignature, tSStringKeyword, tSThisType, tSTupleType, TSType, tSTypeAnnotation, tSTypeLiteral, tSTypeParameter, tSTypeParameterDeclaration, tSTypeQuery, tSTypeReference, tSUndefinedKeyword, tSUnionType, tSVoidKeyword, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
@@ -118,9 +118,15 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
 
   let f = tSFunctionType(tSTypeParameterDeclaration(
     node.typeParameters.params.map(_ => {
-      let bound = _.bound ? toTs(_.bound) : undefined
+
+      // TODO: How is this possible?
+      if (isTSTypeParameter(_)) {
+        return _
+      }
+
+      let constraint = _.bound ? toTs(_.bound) : undefined
       let default_ = _.default ? toTs(_.default) : undefined
-      let param = tSTypeParameter(bound, default_)
+      let param = tSTypeParameter(constraint, default_)
       param.name = _.name
       return param
     })
@@ -139,7 +145,7 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     }
 
     let id = identifier(_.name.name || name)
-    id.typeAnnotation = toTs(_.typeAnnotation) // TODO
+    id.typeAnnotation = tSTypeAnnotation(toTsType(_.typeAnnotation))
 
     return id
   })

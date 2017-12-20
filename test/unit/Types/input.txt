@@ -14,5 +14,5 @@ type H = {
   b: ?string
 }
 type I = {
-  a<T>(b: T): T;
+  a<T: number, U>(b: T, c: U | number): T;
 }
