@@ -64,7 +64,6 @@ export function toTs(node: Flow | TSType): TSType {
     case 'TSSymbolKeyword':
     case 'TSThisType':
     case 'TSTupleType':
-    case 'TSTypeAnnotation':
     case 'TSTypeLiteral':
     case 'TSTypeOperator':
     case 'TSTypePredicate':
@@ -73,9 +72,6 @@ export function toTs(node: Flow | TSType): TSType {
     case 'TSUndefinedKeyword':
     case 'TSUnionType':
     case 'TSVoidKeyword':
-    case 'TSTypeParameterDeclaration':
-    case 'TSAsExpression':
-    case 'TSPropertySignature':
       return node
 
     // Flow types
@@ -223,13 +219,10 @@ function getId(node: FlowType): Identifier {
 function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
   let typeParams = undefined
 
+  let typeParams = undefined
+
   if (node.typeParameters) {
-    typeParams = tsTypeParameterDeclaration(
-      node.typeParameters.params.map(_ => {
-        // TODO: How is this possible?
-        if (isTSTypeParameter(_)) {
-          return _
-        }
+    typeParams = tSTypeParameterDeclaration(node.typeParameters.params.map(_ => {
 
         let constraint = _.bound ? toTs(_.bound) : undefined
         let default_ = _.default ? toTs(_.default) : undefined
