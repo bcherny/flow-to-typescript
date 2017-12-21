@@ -1,18 +1,16 @@
 import test from 'ava'
 import { sync } from 'glob'
+import { chain } from 'lodash'
 import { readFile } from 'mz/fs'
 import { basename, resolve } from 'path'
 import { compile } from '../src'
 
-let paths = ['e2e', 'rules', 'unit']
-
-paths.forEach(path => {
-  // TODO: Why does glob catch tslint.json even with the trailing slash?
-  let folders = sync(resolve(__dirname, `../../test/${path}/*/`))
-    .filter(_ => !_.endsWith('.json'))
-    .filter(_ => !basename(_).startsWith('_'))
-
-  folders.forEach(folder =>
+let tests = chain(['e2e', 'rules', 'unit'])
+  .map(_ => sync(resolve(__dirname, `../../test/${_}/*/`)))
+  .flatten()
+  .filter(_ => !_.endsWith('.json'))
+  .filter(_ => !basename(_).startsWith('_'))
+  .forEach(folder =>
     test(basename(folder), async t => {
       try {
         let filein = resolve(folder, 'input.txt')
@@ -24,4 +22,9 @@ paths.forEach(path => {
       }
     })
   )
-})
+
+function main() {
+  tests.value()
+}
+
+main()

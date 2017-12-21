@@ -1,11 +1,11 @@
 import generate from '@babel/generator'
 import { parse } from '@babel/parser'
-import traverse, { Node, Visitor } from '@babel/traverse'
+import { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
-import { sync } from 'glob'
 import { dropWhile, pullAt } from 'lodash'
 import { EOL } from 'os'
-import { relative, resolve } from 'path'
+import { relative } from 'path'
+import { convert as convertAST } from './convert'
 
 type Warning = [string, string, number, number]
 type Rule = (warnings: Warning[]) => Visitor<Node>
@@ -44,16 +44,17 @@ export async function compile(code: string, filename: string) {
 /**
  * @internal
  */
-export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
+export async function convert(ast: File): Promise<[Warning[], File]> {
+
   // load rules directory
-  await Promise.all(
-    sync(resolve(__dirname, './rules/*.js')).map(_ => import(_))
-  )
+  // await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
 
-  let warnings: Warning[] = []
-  rules.forEach(visitor => traverse(ast, visitor(warnings)))
+  // let warnings: Warning[] = []
+  // rules.forEach(visitor =>
+  //   traverse(ast, visitor(warnings))
+  // )
 
-  return [warnings, ast]
+  return [[], convertAST(ast)]
 }
 
 function stripAtFlowAnnotation(ast: File): File {
