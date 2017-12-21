@@ -619,7 +619,7 @@ babel-types@^6.24.1, babel-types@^6.26.0:
 
 babel@bcherny/babel:
   version "7.0.0"
-  resolved "https://codeload.github.com/bcherny/babel/tar.gz/dd27caffc07f00e06fcdfe7bd1f3a5cc57fd9b00"
+  resolved "https://codeload.github.com/bcherny/babel/tar.gz/beebd1096484cc9afcc0e90d82a94e9076f1f165"
 
 babylon@^6.1.0, babylon@^6.18.0:
   version "6.18.0"
