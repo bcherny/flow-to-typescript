@@ -8,7 +8,7 @@ export function convert(f: File): File {
 
 type AnyNode = AnyNonFlowNode | Flow
 type AnyNonFlowNode = LVal | Statement | t.Declaration | TSType | VariableDeclarator
-  | t.Expression | t.Literal
+  | t.Expression | t.Literal | t.ModuleSpecifier
   | t.File | t.Program | null | undefined
 
 // LVals
@@ -20,6 +20,15 @@ function ts(node: t.ArrayPattern): t.ArrayPattern
 function ts(node: t.ObjectPattern): t.ObjectPattern
 function ts(node: t.TSParameterProperty): t.TSParameterProperty
 function ts(node: t.LVal): t.LVal
+
+// ModuleSpecifiers
+function ts(node: t.ExportSpecifier): t.ExportSpecifier
+function ts(node: t.ImportDefaultSpecifier): t.ImportDefaultSpecifier
+function ts(node: t.ImportNamespaceSpecifier): t.ImportNamespaceSpecifier
+function ts(node: t.ImportSpecifier): t.ImportSpecifier
+function ts(node: t.ExportDefaultSpecifier): t.ExportDefaultSpecifier
+function ts(node: t.ExportNamespaceSpecifier): t.ExportNamespaceSpecifier
+function ts(node: t.ModuleSpecifier): t.ModuleSpecifier
 
 // Statements
 function ts(node: t.BlockStatement): t.BlockStatement
@@ -49,16 +58,6 @@ function ts(node: t.ForOfStatement): t.ForOfStatement
 function ts(node: t.ImportDeclaration): t.ImportDeclaration
 function ts(node: t.Statement): t.Statement
 
-// Statements (Flow)
-function ts(node: t.DeclareClass): t.DeclareClass
-function ts(node: t.DeclareFunction): t.TSDeclareFunction
-function ts(node: t.DeclareInterface): t.DeclareInterface
-function ts(node: t.DeclareModule): t.DeclareModule
-function ts(node: t.DeclareTypeAlias): t.DeclareTypeAlias
-function ts(node: t.DeclareVariable): t.DeclareVariable
-function ts(node: t.InterfaceDeclaration): t.TSInterfaceDeclaration
-function ts(node: t.TypeAlias): t.TypeAlias
-
 // Statements (TS)
 function ts(node: t.TSDeclareFunction): t.TSDeclareFunction
 function ts(node: t.TSEnumDeclaration): t.TSEnumDeclaration
@@ -77,12 +76,6 @@ function ts(node: t.ExportAllDeclaration): t.ExportAllDeclaration
 function ts(node: t.ExportDefaultDeclaration): t.ExportDefaultDeclaration
 function ts(node: t.ExportNamedDeclaration): t.ExportNamedDeclaration
 function ts(node: t.ImportDeclaration): t.ImportDeclaration
-function ts(node: t.DeclareClass): t.DeclareClass
-function ts(node: t.DeclareFunction): t.DeclareFunction
-function ts(node: t.DeclareInterface): t.DeclareInterface
-function ts(node: t.DeclareModule): t.DeclareModule
-function ts(node: t.DeclareTypeAlias): t.DeclareTypeAlias
-function ts(node: t.DeclareVariable): t.DeclareVariable
 function ts(node: t.InterfaceDeclaration): t.InterfaceDeclaration
 function ts(node: t.TypeAlias): t.TypeAlias
 function ts(node: t.TSDeclareFunction): t.TSDeclareFunction
@@ -90,6 +83,7 @@ function ts(node: t.TSEnumDeclaration): t.TSEnumDeclaration
 function ts(node: t.TSInterfaceDeclaration): t.TSInterfaceDeclaration
 function ts(node: t.TSModuleDeclaration): t.TSModuleDeclaration
 function ts(node: t.TSTypeAliasDeclaration): t.TSTypeAliasDeclaration
+function ts(node: t.Declaration): TSType
 
 // Expressions
 function ts(node: t.ArrayExpression): t.ArrayExpression
@@ -140,26 +134,14 @@ function ts(node: t.NullLiteral): t.NullLiteral
 function ts(node: t.RegExpLiteral): t.RegExpLiteral
 function ts(node: t.TemplateLiteral): t.TemplateLiteral
 
-// Flow types
+// FlowTypeAnnotations
 function ts(node: t.AnyTypeAnnotation): t.TSAnyKeyword
 function ts(node: t.ArrayTypeAnnotation): t.TSArrayType
 function ts(node: t.BooleanTypeAnnotation): t.TSBooleanKeyword
 function ts(node: t.BooleanLiteralTypeAnnotation): t.TSLiteralType
-function ts(node: t.ClassImplements): t.ClassImplements
-function ts(node: t.ClassProperty): t.ClassProperty
-function ts(node: t.DeclareClass): t.DeclareClass
-function ts(node: t.DeclareFunction): t.TSDeclareFunction
-function ts(node: t.DeclareInterface): t.DeclareInterface
-function ts(node: t.DeclareModule): t.DeclareModule
-function ts(node: t.DeclareTypeAlias): t.DeclareTypeAlias
-function ts(node: t.DeclareVariable): t.DeclareVariable
-function ts(node: t.ExistentialTypeParam): never
 function ts(node: t.FunctionTypeAnnotation): t.TSFunctionType
-function ts(node: t.FunctionTypeParam): t.FunctionTypeParam // TODO
-function ts(node: t.GenericTypeAnnotation): t.GenericTypeAnnotation // TODO
-function ts(node: t.InterfaceExtends): t.InterfaceExtends
-function ts(node: t.InterfaceDeclaration): t.InterfaceDeclaration
-function ts(node: t.IntersectionTypeAnnotation): t.IntersectionTypeAnnotation
+function ts(node: t.GenericTypeAnnotation): t.TSTypeReference
+function ts(node: t.IntersectionTypeAnnotation): t.TSIntersectionType
 function ts(node: t.MixedTypeAnnotation): t.TSAnyKeyword
 function ts(node: t.NullableTypeAnnotation): t.TSUnionType
 function ts(node: t.NullLiteralTypeAnnotation): t.TSNullKeyword
@@ -170,24 +152,43 @@ function ts(node: t.StringTypeAnnotation): t.TSStringKeyword
 function ts(node: t.ThisTypeAnnotation): t.TSThisType
 function ts(node: t.TupleTypeAnnotation): t.TSTupleType
 function ts(node: t.TypeofTypeAnnotation): t.TSTypeOperator
-function ts(node: t.TypeAlias): t.TypeAlias
 function ts(node: t.TypeAnnotation): t.TSTypeAnnotation
+function ts(node: t.ObjectTypeAnnotation): t.TSObjectKeyword
+function ts(node: t.UnionTypeAnnotation): t.TSUnionType
+function ts(node: t.VoidTypeAnnotation): t.TSVoidKeyword
+function ts(node: t.FlowTypeAnnotation): TSType
+
+// Flow types
+function ts(node: t.ClassImplements): t.TSExpressionWithTypeArguments
+function ts(node: t.ClassProperty): t.ClassProperty
+function ts(node: t.DeclareClass): t.DeclareClass
+function ts(node: t.DeclareFunction): t.TSDeclareFunction
+function ts(node: t.DeclareInterface): t.DeclareInterface
+function ts(node: t.DeclareModule): t.DeclareModule
+function ts(node: t.DeclareTypeAlias): t.DeclareTypeAlias
+function ts(node: t.DeclareVariable): t.DeclareVariable
+function ts(node: t.ExistentialTypeParam): never
+function ts(node: t.FunctionTypeParam): t.FunctionTypeParam // TODO
+function ts(node: t.InterfaceExtends): t.InterfaceExtends
+function ts(node: t.InterfaceDeclaration): t.InterfaceDeclaration
+function ts(node: t.TypeAlias): t.TypeAlias
 function ts(node: t.TypeCastExpression): t.TSAsExpression
 function ts(node: t.TypeParameterDeclaration): t.TSTypeParameterDeclaration
 function ts(node: t.TypeParameterInstantiation): t.TSTypeParameterInstantiation
-function ts(node: t.ObjectTypeAnnotation): t.TSObjectKeyword
 function ts(node: t.ObjectTypeCallProperty): t.ObjectTypeCallProperty // TODO
 function ts(node: t.ObjectTypeIndexer): t.ObjectTypeIndexer
 function ts(node: t.ObjectTypeProperty): t.ObjectTypeProperty
 function ts(node: t.QualifiedTypeIdentifier): t.QualifiedTypeIdentifier
-function ts(node: t.UnionTypeAnnotation): t.TSUnionType
-function ts(node: t.VoidTypeAnnotation): t.TSVoidKeyword
+function ts(node: t.Flow): t.TSType
 
 // Other
 function ts(node: t.File): t.File
 function ts(node: t.Program): t.Program
 function ts(node: null): null
 function ts(node: undefined): undefined
+
+function ts(node: t.Directive): t.Directive
+function ts(node: t.VariableDeclarator): t.VariableDeclarator
 
 function ts(node: AnyNode): AnyNonFlowNode {
 
@@ -198,12 +199,12 @@ function ts(node: AnyNode): AnyNonFlowNode {
   switch (node.type) {
 
     case 'File': return t.file(ts(node.program), node.comments, node.tokens)
-    case 'Program': return t.program(node.body.map(ts), node.directives)
+    case 'Program': return t.program(map(node.body, ts), node.directives)
 
     // Statements
-    case 'VariableDeclaration': return t.variableDeclaration(node.kind, node.declarations.map(ts))
+    case 'VariableDeclaration': return t.variableDeclaration(node.kind, map(node.declarations, ts))
     case 'VariableDeclarator': return t.variableDeclarator(ts(node.id), node.init)
-    case 'BlockStatement': return t.blockStatement(node.body.map(ts), map(node.directives, ts))
+    case 'BlockStatement': return t.blockStatement(map(node.body, _ => ts(_)), map(node.directives, ts))
     case 'DoWhileStatement': return t.doWhileStatement(ts(node.test), ts(node.block))
     case 'ExpressionStatement': return t.expressionStatement(ts(node.expression))
     case 'ForInStatement': return t.forInStatement(ts(node.left), ts(node.right), ts(node.body))
@@ -223,8 +224,9 @@ function ts(node: AnyNode): AnyNonFlowNode {
     case 'ExportNamedDeclaration': return t.exportNamedDeclaration(ts(node.declaration), map(node.specifiers, ts), ts(node.source))
     case 'ForOfStatement': return t.forOfStatement(ts(node.left), ts(node.right), ts(node.body))
     case 'ImportDeclaration': return t.importDeclaration(map(node.specifiers, ts), ts(node.source))
-    case 'BreakStatement':
-    case 'ContinueStatement':
+    case 'BreakStatement': return t.breakStatement(ts(node.label))
+    case 'ContinueStatement': return t.continueStatement(ts(node.label))
+
     case 'DebuggerStatement':
     case 'EmptyStatement':
       return node
@@ -240,13 +242,16 @@ function ts(node: AnyNode): AnyNonFlowNode {
       return node
 
     // Flow types
+    case 'ClassImplements': return node // TODO
+
+    // Flow type annotations
     case 'AnyTypeAnnotation': return tSAnyKeyword()
     case 'ArrayTypeAnnotation': return tSArrayType(ts(node.elementType))
     case 'BooleanTypeAnnotation': return tSBooleanKeyword()
     case 'BooleanLiteralTypeAnnotation': return tSLiteralType(booleanLiteral(node.value))
     case 'FunctionTypeAnnotation': return functionToTsType(node)
     case 'GenericTypeAnnotation': return tSTypeReference(node.id)
-    case 'IntersectionTypeAnnotation': return tSIntersectionType(node.types.map(ts))
+    case 'IntersectionTypeAnnotation': return tSIntersectionType(node.types.map(_ => ts(_)))
     case 'MixedTypeAnnotation': return tSAnyKeyword()
     case 'NullLiteralTypeAnnotation': return tSNullKeyword()
     case 'NullableTypeAnnotation': return tSUnionType([ts(node.typeAnnotation), tSNullKeyword(), tSUndefinedKeyword()])
@@ -255,7 +260,7 @@ function ts(node: AnyNode): AnyNonFlowNode {
     case 'StringLiteralTypeAnnotation': return tSLiteralType(stringLiteral(node.value))
     case 'StringTypeAnnotation': return tSStringKeyword()
     case 'ThisTypeAnnotation': return tSThisType()
-    case 'TupleTypeAnnotation': return tSTupleType(node.types.map(ts))
+    case 'TupleTypeAnnotation': return tSTupleType(node.types.map(_ => ts(_)))
     case 'TypeofTypeAnnotation': return tSTypeQuery(getId(node.argument))
     case 'TypeAnnotation': return ts(node.typeAnnotation)
     case 'ObjectTypeAnnotation': return tSTypeLiteral([
@@ -270,7 +275,7 @@ function ts(node: AnyNode): AnyNonFlowNode {
       })
       // ...node.indexers.map(_ => tSIndexSignature())
     ])
-    case 'UnionTypeAnnotation': return tSUnionType(node.types.map(ts))
+    case 'UnionTypeAnnotation': return tSUnionType(map(node.types, _ => ts(_)))
     case 'VoidTypeAnnotation': return tSVoidKeyword()
 
     case 'ObjectTypeProperty':
