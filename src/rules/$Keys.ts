@@ -1,4 +1,4 @@
-import { GenericTypeAnnotation, tSTypeOperator, tSTypeReference } from 'babel/packages/babel-types'
+import { GenericTypeAnnotation, tsTypeOperator, tsTypeReference } from '@babel/types'
 import { addRule } from '../'
 
 addRule('$Keys', () => ({
@@ -7,7 +7,7 @@ addRule('$Keys', () => ({
       return
     }
     let { id } = (path.node.typeParameters.params[0] as GenericTypeAnnotation)
-    let op = tSTypeOperator(tSTypeReference(id))
+    let op = tsTypeOperator(tsTypeReference(id))
     path.replaceWith(op)
   }
 }))

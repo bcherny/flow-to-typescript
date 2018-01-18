@@ -1,4 +1,4 @@
-import { genericTypeAnnotation, identifier } from 'babel/packages/babel-types'
+import { genericTypeAnnotation, identifier } from '@babel/types'
 import { addRule } from '../'
 
 addRule('$ReadOnly', () => ({

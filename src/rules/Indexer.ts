@@ -1,4 +1,4 @@
-import { identifier, objectTypeIndexer } from 'babel/packages/babel-types'
+import { identifier, objectTypeIndexer } from '@babel/types'
 import { addRule } from '../'
 import { generateFreeIdentifier } from '../utils'
 

@@ -1,4 +1,4 @@
-import { typeAlias } from 'babel/packages/babel-types'
+import { typeAlias } from '@babel/types'
 import { addRule } from '../'
 
 addRule('Opaque', warnings => ({

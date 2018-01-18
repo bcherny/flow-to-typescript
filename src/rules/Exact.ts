@@ -1,4 +1,4 @@
-import { objectTypeAnnotation } from 'babel/packages/babel-types'
+import { objectTypeAnnotation } from '@babel/types'
 import { addRule } from '../'
 
 addRule('Exact', warnings => ({

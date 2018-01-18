@@ -1,9 +1,9 @@
-import generate from 'babel/packages/babel-generator/lib'
-import traverse, { Node, Visitor } from 'babel/packages/babel-traverse/lib'
-import { File } from 'babel/packages/babel-types/lib'
-import { parse } from 'babel/packages/babylon/lib'
+import { parse } from '@babel/babylon'
+import generate from '@babel/generator'
+import traverse, { Node, Visitor } from '@babel/traverse'
+import { File } from '@babel/types'
 import { sync } from 'glob'
-import { dropWhile } from 'lodash'
+import { dropWhile, pullAt } from 'lodash'
 import { EOL } from 'os'
 import { relative, resolve } from 'path'
 
@@ -53,7 +53,7 @@ function stripAtFlowAnnotation(ast: File): File {
   if (leadingComments) {
     let index = leadingComments.findIndex(_ => _.value.trim() === '@flow')
     if (index > -1) {
-      leadingComments.splice(index, 1)
+      pullAt(leadingComments, index)
     }
   }
   return ast
