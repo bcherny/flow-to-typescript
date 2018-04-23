@@ -24,7 +24,7 @@ npm install flow-to-typescript --save
 
 ```sh
 # Install globally
-yarn add --global flow-to-typescript
+yarn global add flow-to-typescript
 
 # Compile a file (all of these are equivalent)
 flow2ts my/file.js.flow
@@ -41,7 +41,7 @@ import { compile } from 'flow-to-typescript'
 import { readFileSync, writeFileSync } from 'fs'
 
 let path = 'path/to/file.js.flow'
-let file = readFileSync(path, 'utf-8)
+let file = readFileSync(path, 'utf-8')
 
 compile(file, path).then(ts =>
   writeFileSync('path/to/file.ts', ts)
