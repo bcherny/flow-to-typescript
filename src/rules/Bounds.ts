@@ -1,6 +1,6 @@
-import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from 'babel/packages/babel-types/lib'
+import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from '@babel/types'
 import { addRule } from '../'
-import { toTs } from '../convert'
+import { ts } from '../convert'
 
 addRule('Bounds', () => ({
   TypeParameterDeclaration(path) {
@@ -9,7 +9,7 @@ addRule('Bounds', () => ({
       return
     }
 
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(ts(path.node))
   }
 }))
 

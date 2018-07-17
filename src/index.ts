@@ -1,6 +1,6 @@
 import generate from '@babel/generator'
-import { Node, Visitor } from 'babel/packages/babel-traverse/lib'
-import { File } from 'babel/packages/babel-types/lib'
+import { Node, Visitor } from '@babel/traverse'
+import { File } from '@babel/types'
 import { parse } from 'babel/packages/babylon/lib'
 import { dropWhile } from 'lodash'
 import { EOL } from 'os'

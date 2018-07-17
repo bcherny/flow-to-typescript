@@ -197,7 +197,7 @@ type TS = {
   // (node: AnyNode): AnyNonFlowNode
 }
 
-let ts: TS = (node?: AnyNode | null) => {
+export let ts: TS = (node?: AnyNode | null) => {
 
   if (!node) {
     return node
