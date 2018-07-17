@@ -1,4 +1,4 @@
-import generate from 'babel/packages/babel-generator/lib'
+import generate from '@babel/generator'
 import { Node, Visitor } from 'babel/packages/babel-traverse/lib'
 import { File } from 'babel/packages/babel-types/lib'
 import { parse } from 'babel/packages/babylon/lib'
