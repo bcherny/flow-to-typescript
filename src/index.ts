@@ -1,4 +1,4 @@
-import { parse } from '@babel/babylon'
+import { parse } from 'babylon'
 import generate from '@babel/generator'
 import traverse, { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
