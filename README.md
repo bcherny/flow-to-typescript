@@ -54,7 +54,7 @@ compile(file, path).then(ts =>
 
 | Done? |             | Flow                                    | TypeScript |
 |-------|-------------|-----------------------------------------|------------|
-|   ✅  | Maybe       | `?type` (NullableTypeAnnotation)        | `type | null | undefined` |
+|   ✅  | Maybe       | `?type` (NullableTypeAnnotation)        | `type \| null \| undefined` |
 |   ✅  | Undefined   | `void`                                  | `undefined` |
 |   ✅  | Mixed       | `mixed`                                 | `{}` |
 |   ✅  | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
