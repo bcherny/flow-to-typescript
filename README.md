@@ -55,12 +55,14 @@ compile(file, path).then(ts =>
 | Done? |             | Flow                                    | TypeScript |
 |-------|-------------|-----------------------------------------|------------|
 |   ✅  | Maybe       | `?type` (NullableTypeAnnotation)        | `type | null | undefined` |
-|   ✅  | Undefined   | `void`                                  | `undefined` |
-|   ✅  | Mixed       | `mixed`                                 | `{}` |
+|   ✅  | Null        | `null`                                  | `null` |
+|   ✅  | Undefined   | `typeof undefined`                      | `undefined` |
+|   ✅  | Mixed       | `mixed`                                 | `unknown` |
+|   ✅  | Void        | `void`                                  | `void` |
 |   ✅  | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
 |   ⚔  | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |
 |   ⚔  | Predicates (1) | `(a: A, b: B) => C %checks`          | `(a: A, b: B) => C` |
-|   ✅  | Exact types | `{\| a: A \|}`                            | `{ a: A }` (not expressible) |
+|   ✅  | Exact types | `{\| a: A \|}`                            | `{ a: A }` |
 |   ✅  | Indexers    | `{ [A]: B }`                            | `{ [a: A]: B }` |
 |   ✅  | Opaque types | `opaque type A = B`                    | `type A = B` (not expressible) |
 |   ✅  | Variance    | `interface A { +b: B, -c: C }`          | `interface A { readonly b: B, c: C }` |
@@ -77,13 +79,13 @@ compile(file, path).then(ts =>
 |       | Values      | `$Values<A>`                            | `A[keyof A]` |
 |   ✅  | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
 |   ✅  | Exact       | `$Exact<A>`                             | `A` |
-|       | Difference  | `$Diff<A, B>`                           | TODO |
-|       | Rest        | `$Rest<A, B>`                           | TODO |
+|       | Difference  | `$Diff<A, B>`                           | TODO` |
+|       | Rest        | `$Rest<A, B>`                           | `Exclude` |
 |       | Property type | `$PropertyType<T, k>`                 | `T[k]` |
 |       | Element type | `$ElementType<T, K>`                   | `T[k]` |
-|       | Dependent type | `$ObjMap<T, F>`                      | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/20352) |
-|       | Mapped tuple | `$TupleMap<T, F>`                      | `any` (warn) |
-|       | Return type | `$Call<F>`                              | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/6606)
+|       | Dependent type | `$ObjMap<T, F>`                      | TODO |
+|       | Mapped tuple | `$TupleMap<T, F>`                      | TODO |
+|       | Return type | `$Call<F>`                              | `ReturnType` |
 |       | Class       | `Class<A>`                              | `typeof A` |
 |       | Supertype   | `$Supertype<A>`                         | `any` (warn - vote for https://github.com/Microsoft/TypeScript/issues/14520) |
 |       | Subtype     | `$Subtype<A>`                           | `B extends A` |
