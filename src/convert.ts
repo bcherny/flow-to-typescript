@@ -42,9 +42,27 @@ import {
 } from "@babel/types";
 import { generateFreeIdentifier } from "./utils";
 
+let depth = 0;
 // TODO: Add overloads
 export function toTs(node: Flow | TSType): TSType {
-  console.log(`\t ${node.type}`);
+  try {
+    depth++;
+    console.log("  ".repeat(depth) + ` >${node.type}`);
+    return _toTs(node);
+  } catch (e) {
+    if (!e.logged) {
+      e.logged = true;
+      console.log("  ".repeat(depth) + ` !${node.type}`);
+      console.error(e);
+      console.dir(node, { depth: 8 });
+    }
+    throw e;
+  } finally {
+    console.log("  ".repeat(depth) + ` <${node.type}`);
+    depth--;
+  }
+}
+export function _toTs(node: Flow | TSType): TSType {
   switch (node.type) {
     // TS types
     // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
