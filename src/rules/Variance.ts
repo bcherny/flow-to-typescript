@@ -1,16 +1,16 @@
-import { addRule } from '../'
-import { toTs } from '../convert'
+import { addRule } from "..";
+import { toTs } from "../convert";
 
-addRule('Variance', warnings => ({
+addRule("Variance", warnings => ({
   ObjectTypeProperty(path) {
-    if (path.node.variance && path.node.variance.kind === 'plus') {
+    if (path.node.variance && path.node.variance.kind === "plus") {
       warnings.push([
         `Contravariance can't be expressed in TypeScript`,
-        'https://github.com/Microsoft/TypeScript/issues/1394',
+        "https://github.com/Microsoft/TypeScript/issues/1394",
         path.node.loc.start.line,
-        path.node.loc.start.column
-      ])
+        path.node.loc.start.column,
+      ]);
     }
-    path.replaceWith(toTs(path.node))
-  }
-}))
+    path.replaceWith(toTs(path.node));
+  },
+}));
