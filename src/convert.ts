@@ -82,6 +82,8 @@ export function toTs(node: Flow | TSType): TSType {
       return node;
 
     // Flow types
+    case "TypeAnnotation":
+      return tsTypeAnnotation(toTsType(node));
     case "AnyTypeAnnotation":
     case "ArrayTypeAnnotation":
     case "BooleanTypeAnnotation":
@@ -99,7 +101,6 @@ export function toTs(node: Flow | TSType): TSType {
     case "ThisTypeAnnotation":
     case "TupleTypeAnnotation":
     case "TypeofTypeAnnotation":
-    case "TypeAnnotation":
     case "ObjectTypeAnnotation":
     case "UnionTypeAnnotation":
     case "VoidTypeAnnotation":
@@ -112,7 +113,7 @@ export function toTs(node: Flow | TSType): TSType {
       return _;
 
     case "TypeCastExpression":
-      return tsAsExpression(node.expression, toTs(node.typeAnnotation));
+      return tsAsExpression(node.expression, toTsType(node.typeAnnotation));
 
     case "TypeParameterDeclaration":
       let params = node.params.map(_ => {
@@ -126,6 +127,9 @@ export function toTs(node: Flow | TSType): TSType {
       });
 
       return tsTypeParameterDeclaration(params);
+
+    case "QualifiedTypeIdentifier":
+      return tsTypeReference(tsQualifiedName(node.qualification, node.id));
 
     case "ClassImplements":
     case "ClassProperty":
@@ -143,7 +147,7 @@ export function toTs(node: Flow | TSType): TSType {
     case "TypeParameterInstantiation":
     case "ObjectTypeCallProperty":
     case "ObjectTypeIndexer":
-    case "QualifiedTypeIdentifier":
+      console.log("WUT");
       console.dir(node);
       throw "wut";
   }
@@ -160,20 +164,18 @@ export function toTsType(node: FlowType): TSType {
     case "BooleanLiteralTypeAnnotation":
       return tsLiteralType(booleanLiteral(node.value!));
     case "FunctionTypeAnnotation":
+      console.dir(node);
+      console.dir(functionToTsType(node), { depth: 8 });
       return functionToTsType(node);
     case "GenericTypeAnnotation":
+      return toTs(node.id);
+    /*
       if (node.id.type === "QualifiedTypeIdentifier") {
-        const qualifiedTypeIdentifier: QualifiedTypeIdentifier = node.id;
-        console.dir(node);
-        return tsTypeReference(
-          tsQualifiedName(
-            qualifiedTypeIdentifier.qualification,
-            qualifiedTypeIdentifier.id
-          )
-        );
+        return toTsType(node.id);
       } else {
         return tsTypeReference(node.id);
       }
+      */
     case "IntersectionTypeAnnotation":
       return tsIntersectionType(node.types.map(toTsType));
     case "MixedTypeAnnotation":
@@ -202,8 +204,7 @@ export function toTsType(node: FlowType): TSType {
       return tsTypeQuery(getId(node.argument));
 
     case "TypeAnnotation":
-      console.log(node);
-      return toTsType(node.typeAnnotation);
+      return toTs(node.typeAnnotation);
 
     case "ObjectTypeAnnotation":
       return tsTypeLiteral([
@@ -228,8 +229,8 @@ export function toTsType(node: FlowType): TSType {
       return tsUnionType(node.types.map(toTsType));
     case "VoidTypeAnnotation":
       return tsVoidKeyword();
-    case "QualifiedTypeAnnotation":
-      console.dir(node);
+    case "ExistsTypeAnnotation":
+      return tsAnyKeyword();
     default:
       throw new Error(`Didn't understand type '${node.type}'`);
   }
