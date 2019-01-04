@@ -1,4 +1,4 @@
-import { addRule } from "../";
+import { addRule } from "..";
 import { toTs } from "../convert";
 
 addRule("TypeAnnotation", () => ({

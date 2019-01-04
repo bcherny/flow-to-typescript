@@ -155,7 +155,7 @@ export function _toTs(node: Flow | TSType): TSType {
       return tsTypeParameterDeclaration(params);
 
     case "QualifiedTypeIdentifier":
-      return tsTypeReference(tsQualifiedName(node.qualification, node.id));
+      return toTsType(node);
 
     /*
     case "ObjectTypeIndexer":
@@ -193,6 +193,8 @@ export function toTsType(node: FlowType): TSType {
   switch (node.type) {
     case "Identifier":
       return tsTypeReference(node);
+    case "QualifiedTypeIdentifier":
+      return tsTypeReference(tsQualifiedName(node.qualification, node.id));
     case "AnyTypeAnnotation":
       return tsAnyKeyword();
     case "ArrayTypeAnnotation":
@@ -203,11 +205,26 @@ export function toTsType(node: FlowType): TSType {
       return tsLiteralType(booleanLiteral(node.value!));
     case "FunctionTypeAnnotation":
       return functionToTsType(node);
-    case "GenericTypeAnnotation":
-      if (node.id.type === "Identifier") {
+    case "GenericTypeAnnotation": {
+      if (node.typeParameters && node.typeParameters.length) {
+        return tsTypeReference(
+          toTs(node.id),
+          node.typeParameters.params.map(p => toTsType(p))
+        );
+      } else {
         return toTsType(node.id);
       }
-      return toTs(node.id);
+      /*
+      let type;
+      if (node.id.type === "Identifier") {
+        type = toTsType(node.id);
+      } else {
+        type = toTs(node.id);
+      }
+      type.typeArguments = toTsType(node.typeParameters),
+      return type;
+      */
+    }
     /*
       if (node.id.type === "QualifiedTypeIdentifier") {
         return toTsType(node.id);
@@ -265,7 +282,7 @@ export function toTsType(node: FlowType): TSType {
         // ...node.indexers.map(_ => tSIndexSignature())
       ]);
     case "UnionTypeAnnotation":
-      return tsUnionType(node.types.map(toTsType));
+      return tsUnionType(node.types.map(toTs));
     case "VoidTypeAnnotation":
       return tsVoidKeyword();
     case "ExistsTypeAnnotation":
