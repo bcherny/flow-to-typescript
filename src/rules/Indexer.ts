@@ -1,19 +1,19 @@
-import { identifier, objectTypeIndexer } from '@babel/types'
-import { addRule } from '../'
-import { generateFreeIdentifier } from '../utils'
+import { identifier, objectTypeIndexer } from "@babel/types";
+import { addRule } from "../";
+import { generateFreeIdentifier } from "../utils";
 
-addRule('Indexer', () => ({
+addRule("Indexer", () => ({
   ObjectTypeIndexer(path) {
-
     if (path.node.id !== null) {
-      return
+      return;
     }
 
-    path.replaceWith(objectTypeIndexer(
-      identifier(generateFreeIdentifier([])),
-      path.node.key,
-      path.node.value
-    ))
-
-  }
-}))
+    path.replaceWith(
+      objectTypeIndexer(
+        identifier(generateFreeIdentifier([])),
+        path.node.key,
+        path.node.value
+      )
+    );
+  },
+}));

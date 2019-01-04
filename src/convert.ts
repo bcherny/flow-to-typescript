@@ -5,7 +5,7 @@ import {
   FunctionTypeAnnotation,
   identifier,
   Identifier,
-  isSpreadProperty,
+  isSpreadElement,
   isTSTypeParameter,
   isTypeParameter,
   Node,
@@ -39,6 +39,8 @@ import {
   TypeParameter,
   tsQualifiedName,
   QualifiedTypeIdentifier,
+  tsIndexSignature,
+  tsTypeAliasDeclaration,
 } from "@babel/types";
 import { generateFreeIdentifier } from "./utils";
 
@@ -154,6 +156,13 @@ export function _toTs(node: Flow | TSType): TSType {
     case "QualifiedTypeIdentifier":
       return tsTypeReference(tsQualifiedName(node.qualification, node.id));
 
+    /*
+    case "ObjectTypeIndexer":
+      return tsTypeLiteral([tsIndexSignature(node.parameters)]);
+      */
+    case "TypeAlias":
+      return tsTypeAliasDeclaration(node.id, null, toTs(node.right));
+
     case "ClassImplements":
     case "ClassProperty":
     case "DeclareClass":
@@ -177,6 +186,9 @@ export function _toTs(node: Flow | TSType): TSType {
 }
 
 export function toTsType(node: FlowType): TSType {
+  if (node.type.match(/^TS[A-Z]/)) {
+    return node;
+  }
   switch (node.type) {
     case "Identifier":
       return tsTypeReference(node);
@@ -235,12 +247,12 @@ export function toTsType(node: FlowType): TSType {
     case "ObjectTypeAnnotation":
       return tsTypeLiteral([
         ...node.properties.map(_ => {
-          if (isSpreadProperty(_)) {
+          if (isSpreadElement(_)) {
             return _;
           }
           let s = tsPropertySignature(
             _.key,
-            tsTypeAnnotation(toTsType(_.value))
+            tsTypeAnnotation(toTsType(_.typeAnnotation || _.value))
           );
           s.optional = _.optional;
           return s;
@@ -320,7 +332,6 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
       return id;
     });
   }
-
 
   return f;
 }

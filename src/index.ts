@@ -55,11 +55,37 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   );
 
   let warnings: Warning[] = [];
-  rules.forEach((visitor, i) => {
-    console.log(`Running visitor ${i}`);
-
-    return traverse(ast, visitor(warnings));
+  const order = [
+    "$Exact",
+    "$Keys",
+    "$ReadOnly",
+    "Bounds",
+    "Casting",
+    "Exact",
+    "Variance",
+    "Indexer",
+    "TypeAlias",
+  ];
+  const keys = [...rules.keys()];
+  const all = [...order, ...keys.filter(k => order.indexOf(k) < 0)];
+  const visitor = {};
+  all.forEach(i => {
+    const visGen = rules.get(i);
+    const vis = visGen(warnings);
+    Object.keys(vis).forEach(k => {
+      if (!visitor[k]) {
+        visitor[k] = vis[k];
+      } else {
+        const oldVis = visitor[k];
+        visitor[k] = (...args) => {
+          oldVis(...args);
+          vis[k](...args);
+        };
+      }
+    });
   });
+  console.log(`Traversing...`);
+  traverse(ast, visitor);
   console.log("Done");
 
   return [warnings, ast];
