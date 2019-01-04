@@ -113,6 +113,7 @@ export function _toTs(node: Flow | TSType): TSType {
     case "ArrayTypeAnnotation":
     case "BooleanTypeAnnotation":
     case "BooleanLiteralTypeAnnotation":
+    case "ExistsTypeAnnotation":
     case "FunctionTypeAnnotation":
     case "GenericTypeAnnotation":
     case "IntersectionTypeAnnotation":
@@ -303,9 +304,14 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     );
   }
 
+  const returnTypeType = node.returnType ? toTs(node.returnType) : null;
+  if (node.returnType && !returnTypeType) {
+    console.dir(node.returnType);
+    throw new Error(`Could not convert return type '${node.returnType.type}'`);
+  }
   let f = tsFunctionType(
     typeParams,
-    node.returnType ? tsTypeAnnotation(toTs(node.returnType)) : undefined
+    node.returnType ? tsTypeAnnotation(returnTypeType) : undefined
   );
   // Params
   if (node.params) {
