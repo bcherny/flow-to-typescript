@@ -43,23 +43,28 @@ import {
 import { generateFreeIdentifier } from "./utils";
 
 let depth = 0;
+let stack = [];
 // TODO: Add overloads
 export function toTs(node: Flow | TSType): TSType {
   try {
     depth++;
-    console.log("  ".repeat(depth) + ` >${node.type}`);
+    stack.push("  ".repeat(depth) + ` >${node.type}`);
     return _toTs(node);
   } catch (e) {
     if (!e.logged) {
       e.logged = true;
-      console.log("  ".repeat(depth) + ` !${node.type}`);
+      stack.push("  ".repeat(depth) + ` !${node.type}`);
+      console.error(stack.join("\n"));
       console.error(e);
       console.dir(node, { depth: 8 });
     }
     throw e;
   } finally {
-    console.log("  ".repeat(depth) + ` <${node.type}`);
+    stack.push("  ".repeat(depth) + ` <${node.type}`);
     depth--;
+    if (depth === 0) {
+      stack = [];
+    }
   }
 }
 export function _toTs(node: Flow | TSType): TSType {
