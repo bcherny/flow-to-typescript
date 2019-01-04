@@ -155,6 +155,8 @@ export function toTs(node: Flow | TSType): TSType {
 
 export function toTsType(node: FlowType): TSType {
   switch (node.type) {
+    case "Identifier":
+      return tsTypeReference(node);
     case "AnyTypeAnnotation":
       return tsAnyKeyword();
     case "ArrayTypeAnnotation":
@@ -164,10 +166,11 @@ export function toTsType(node: FlowType): TSType {
     case "BooleanLiteralTypeAnnotation":
       return tsLiteralType(booleanLiteral(node.value!));
     case "FunctionTypeAnnotation":
-      console.dir(node);
-      console.dir(functionToTsType(node), { depth: 8 });
       return functionToTsType(node);
     case "GenericTypeAnnotation":
+      if (node.id.type === "Identifier") {
+        return toTsType(node.id);
+      }
       return toTs(node.id);
     /*
       if (node.id.type === "QualifiedTypeIdentifier") {
@@ -265,8 +268,10 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     );
   }
 
-  let f = tsFunctionType(typeParams);
-
+  let f = tsFunctionType(
+    typeParams,
+    node.returnType ? tsTypeAnnotation(toTs(node.returnType)) : undefined
+  );
   // Params
   if (node.params) {
     // TODO: Rest params
@@ -293,10 +298,6 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     });
   }
 
-  // Return type
-  if (node.returnType) {
-    f.typeAnnotation = tsTypeAnnotation(toTsType(node.returnType));
-  }
 
   return f;
 }
