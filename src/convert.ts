@@ -41,6 +41,7 @@ import {
   QualifiedTypeIdentifier,
   tsIndexSignature,
   tsTypeAliasDeclaration,
+  tsTypeParameterInstantiation,
 } from "@babel/types";
 import { generateFreeIdentifier } from "./utils";
 
@@ -186,15 +187,22 @@ export function _toTs(node: Flow | TSType): TSType {
   }
 }
 
+export function toTsTypeName(node: FlowType): TsType {
+  switch (node.type) {
+    case "Identifier":
+      return node;
+    case "QualifiedTypeIdentifier":
+      return tsQualifiedName(node.qualification, node.id);
+  }
+}
 export function toTsType(node: FlowType): TSType {
   if (node.type.match(/^TS[A-Z]/)) {
     return node;
   }
   switch (node.type) {
     case "Identifier":
-      return tsTypeReference(node);
     case "QualifiedTypeIdentifier":
-      return tsTypeReference(tsQualifiedName(node.qualification, node.id));
+      return tsTypeReference(toTsTypeName(node));
     case "AnyTypeAnnotation":
       return tsAnyKeyword();
     case "ArrayTypeAnnotation":
@@ -206,10 +214,12 @@ export function toTsType(node: FlowType): TSType {
     case "FunctionTypeAnnotation":
       return functionToTsType(node);
     case "GenericTypeAnnotation": {
-      if (node.typeParameters && node.typeParameters.length) {
+      if (node.typeParameters && node.typeParameters.params.length) {
         return tsTypeReference(
-          toTs(node.id),
-          node.typeParameters.params.map(p => toTsType(p))
+          toTsTypeName(node.id),
+          tsTypeParameterInstantiation(
+            node.typeParameters.params.map(p => toTsType(p))
+          )
         );
       } else {
         return toTsType(node.id);
