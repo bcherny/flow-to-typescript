@@ -41,7 +41,9 @@ import {
   QualifiedTypeIdentifier,
   tsIndexSignature,
   tsTypeAliasDeclaration,
-  tsTypeParameterInstantiation
+  tsTypeParameterInstantiation,
+  TSTypeElement,
+  TSQualifiedName
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -187,22 +189,30 @@ export function _toTs(node: Flow | TSType): TSType {
   }
 }
 
-export function toTsTypeName(node: FlowType): TsType {
+export function toTsTypeName(
+  node: Identifier | QualifiedTypeIdentifier
+): Identifier | TSQualifiedName {
   switch (node.type) {
     case 'Identifier':
       return node
     case 'QualifiedTypeIdentifier':
-      return tsQualifiedName(node.qualification, node.id)
+      return tsQualifiedName(toTsTypeName(node.qualification), node.id)
   }
+  throw new Error('Could not convert to TS identifier')
 }
+
 export function toTsType(node: FlowType): TSType {
   if (node.type.match(/^TS[A-Z]/)) {
+    // @ts-ignore
     return node
   }
   switch (node.type) {
+    // @ts-ignore
     case 'Identifier':
+    // @ts-ignore
     case 'QualifiedTypeIdentifier':
       return tsTypeReference(toTsTypeName(node))
+
     case 'AnyTypeAnnotation':
       return tsAnyKeyword()
     case 'ArrayTypeAnnotation':
@@ -222,26 +232,9 @@ export function toTsType(node: FlowType): TSType {
           )
         )
       } else {
-        return toTsType(node.id)
+        return tsTypeReference(toTsTypeName(node.id))
       }
-      /*
-      let type;
-      if (node.id.type === "Identifier") {
-        type = toTsType(node.id);
-      } else {
-        type = toTs(node.id);
-      }
-      type.typeArguments = toTsType(node.typeParameters),
-      return type;
-      */
     }
-    /*
-      if (node.id.type === "QualifiedTypeIdentifier") {
-        return toTsType(node.id);
-      } else {
-        return tsTypeReference(node.id);
-      }
-      */
     case 'IntersectionTypeAnnotation':
       return tsIntersectionType(node.types.map(toTsType))
     case 'MixedTypeAnnotation':
@@ -274,21 +267,23 @@ export function toTsType(node: FlowType): TSType {
 
     case 'ObjectTypeAnnotation':
       return tsTypeLiteral([
-        ...node.properties.map(_ => {
-          if (isSpreadElement(_)) {
-            return _
+        ...node.properties.map(
+          (_): TSTypeElement => {
+            if (_.type === 'ObjectTypeSpreadProperty') {
+              return _
+            }
+            let s = tsPropertySignature(
+              _.key,
+              tsTypeAnnotation(toTsType((_ as any).typeAnnotation))
+            )
+            s.optional = (_ as any).optional
+            return s
+            // TODO: anonymous indexers
+            // TODO: named indexers
+            // TODO: call properties
+            // TODO: variance
           }
-          let s = tsPropertySignature(
-            _.key,
-            tsTypeAnnotation(toTsType(_.typeAnnotation || _.value))
-          )
-          s.optional = _.optional
-          return s
-          // TODO: anonymous indexers
-          // TODO: named indexers
-          // TODO: call properties
-          // TODO: variance
-        })
+        )
         // ...node.indexers.map(_ => tSIndexSignature())
       ])
     case 'UnionTypeAnnotation':
@@ -312,7 +307,7 @@ function getId(node: FlowType): Identifier {
 }
 
 function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
-  let typeParams = undefined
+  let typeParams
 
   if (node.typeParameters) {
     typeParams = tsTypeParameterDeclaration(
@@ -338,7 +333,7 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
   }
   let f = tsFunctionType(
     typeParams,
-    node.returnType ? tsTypeAnnotation(returnTypeType) : undefined
+    node.returnType ? tsTypeAnnotation(returnTypeType as any) : undefined
   )
   // Params
   if (node.params) {

@@ -70,7 +70,7 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   const all = [...order, ...keys.filter(k => order.indexOf(k) < 0)]
   const visitor = {}
   all.forEach(i => {
-    const visGen = rules.get(i)
+    const visGen = rules.get(i)!
     const vis = visGen(warnings)
     Object.keys(vis).forEach(k => {
       if (!visitor[k]) {

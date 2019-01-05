@@ -48,6 +48,8 @@
     "typescript": "^3.2.2"
   },
   "ava": {
-    "files": ["./dist/test/test.js"]
+    "files": [
+      "./dist/test/test.js"
+    ]
   }
 }
