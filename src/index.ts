@@ -20,30 +20,38 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-
   let [warnings, ast] = await convert(
-    parse(code, { plugins: ['classProperties', 'flow', 'objectRestSpread'], sourceType: 'module' })
+    parse(code, {
+      plugins: ['classProperties', 'flow', 'objectRestSpread'],
+      sourceType: 'module'
+    })
   )
 
   warnings.forEach(([message, issueURL, line, column]) => {
-    console.log(`Warning: ${message} (at ${relative(__dirname, filename)}: line ${line}, column ${column}). See ${issueURL}`)
+    console.log(
+      `Warning: ${message} (at ${relative(
+        __dirname,
+        filename
+      )}: line ${line}, column ${column}). See ${issueURL}`
+    )
   })
 
-  return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code))
+  return addTrailingSpace(
+    trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code)
+  )
 }
 
 /**
  * @internal
  */
 export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
-
   // load rules directory
-  await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
+  await Promise.all(
+    sync(resolve(__dirname, './rules/*.js')).map(_ => import(_))
+  )
 
   let warnings: Warning[] = []
-  rules.forEach(visitor =>
-    traverse(ast, visitor(warnings))
-  )
+  rules.forEach(visitor => traverse(ast, visitor(warnings)))
 
   return [warnings, ast]
 }

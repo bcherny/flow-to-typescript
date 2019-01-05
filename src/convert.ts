@@ -1,10 +1,48 @@
-import { booleanLiteral, Flow, FlowType, FunctionTypeAnnotation, identifier, Identifier, isSpreadProperty, isTSTypeParameter, isTypeParameter, Node, numericLiteral, stringLiteral, tsAnyKeyword, tsArrayType, tsAsExpression, tsBooleanKeyword, tsFunctionType, TSFunctionType, tsIntersectionType, tsLiteralType, tsNullKeyword, tsNumberKeyword, tsPropertySignature, tsStringKeyword, tsThisType, tsTupleType, TSType, tsTypeAnnotation, tsTypeLiteral, tsTypeParameter, tsTypeParameterDeclaration, tsTypeQuery, tsTypeReference, tsUndefinedKeyword, tsUnionType, tsVoidKeyword, TypeAnnotation, TypeParameter } from '@babel/types'
+import {
+  booleanLiteral,
+  Flow,
+  FlowType,
+  FunctionTypeAnnotation,
+  identifier,
+  Identifier,
+  isSpreadProperty,
+  isTSTypeParameter,
+  isTypeParameter,
+  Node,
+  numericLiteral,
+  stringLiteral,
+  tsAnyKeyword,
+  tsArrayType,
+  tsAsExpression,
+  tsBooleanKeyword,
+  tsFunctionType,
+  TSFunctionType,
+  tsIntersectionType,
+  tsLiteralType,
+  tsNullKeyword,
+  tsNumberKeyword,
+  tsPropertySignature,
+  tsStringKeyword,
+  tsThisType,
+  tsTupleType,
+  TSType,
+  tsTypeAnnotation,
+  tsTypeLiteral,
+  tsTypeParameter,
+  tsTypeParameterDeclaration,
+  tsTypeQuery,
+  tsTypeReference,
+  tsUndefinedKeyword,
+  tsUnionType,
+  tsVoidKeyword,
+  TypeAnnotation,
+  TypeParameter
+} from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
 // TODO: Add overloads
 export function toTs(node: Flow | TSType): TSType {
   switch (node.type) {
-
     // TS types
     // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
     case 'TSAnyKeyword':
@@ -75,7 +113,7 @@ export function toTs(node: Flow | TSType): TSType {
 
     case 'TypeParameterDeclaration':
       let params = node.params.map(_ => {
-        let d = (_ as any as TypeParameter).default
+        let d = ((_ as any) as TypeParameter).default
         let p = tsTypeParameter(
           hasBound(_) ? toTsType(_.bound.typeAnnotation) : undefined,
           d ? toTs(d) : undefined
@@ -109,68 +147,97 @@ export function toTs(node: Flow | TSType): TSType {
 
 export function toTsType(node: FlowType): TSType {
   switch (node.type) {
-    case 'AnyTypeAnnotation': return tsAnyKeyword()
-    case 'ArrayTypeAnnotation': return tsArrayType(toTsType(node.elementType))
-    case 'BooleanTypeAnnotation': return tsBooleanKeyword()
-    case 'BooleanLiteralTypeAnnotation': return tsLiteralType(booleanLiteral(node.value!))
-    case 'FunctionTypeAnnotation': return functionToTsType(node)
-    case 'GenericTypeAnnotation': return tsTypeReference(node.id)
-    case 'IntersectionTypeAnnotation': return tsIntersectionType(node.types.map(toTsType))
-    case 'MixedTypeAnnotation': return tsAnyKeyword()
-    case 'NullLiteralTypeAnnotation': return tsNullKeyword()
-    case 'NullableTypeAnnotation': return tsUnionType([toTsType(node.typeAnnotation), tsNullKeyword(), tsUndefinedKeyword()])
-    case 'NumberLiteralTypeAnnotation': return tsLiteralType(numericLiteral(node.value!))
-    case 'NumberTypeAnnotation': return tsNumberKeyword()
-    case 'StringLiteralTypeAnnotation': return tsLiteralType(stringLiteral(node.value!))
-    case 'StringTypeAnnotation': return tsStringKeyword()
-    case 'ThisTypeAnnotation': return tsThisType()
-    case 'TupleTypeAnnotation': return tsTupleType(node.types.map(toTsType))
-    case 'TypeofTypeAnnotation': return tsTypeQuery(getId(node.argument))
-    case 'ObjectTypeAnnotation': return tsTypeLiteral([
-      ...node.properties.map(_ => {
-        if (isSpreadProperty(_)) {
-          return _
-        }
-        let s = tsPropertySignature(_.key, tsTypeAnnotation(toTsType(_.value)))
-        s.optional = _.optional
-        return s
-        // TODO: anonymous indexers
-        // TODO: named indexers
-        // TODO: call properties
-        // TODO: variance
-      })
-      // ...node.indexers.map(_ => tSIndexSignature())
-    ])
-    case 'UnionTypeAnnotation': return tsUnionType(node.types.map(toTsType))
-    case 'VoidTypeAnnotation': return tsVoidKeyword()
+    case 'AnyTypeAnnotation':
+      return tsAnyKeyword()
+    case 'ArrayTypeAnnotation':
+      return tsArrayType(toTsType(node.elementType))
+    case 'BooleanTypeAnnotation':
+      return tsBooleanKeyword()
+    case 'BooleanLiteralTypeAnnotation':
+      return tsLiteralType(booleanLiteral(node.value!))
+    case 'FunctionTypeAnnotation':
+      return functionToTsType(node)
+    case 'GenericTypeAnnotation':
+      return tsTypeReference(node.id)
+    case 'IntersectionTypeAnnotation':
+      return tsIntersectionType(node.types.map(toTsType))
+    case 'MixedTypeAnnotation':
+      return tsAnyKeyword()
+    case 'NullLiteralTypeAnnotation':
+      return tsNullKeyword()
+    case 'NullableTypeAnnotation':
+      return tsUnionType([
+        toTsType(node.typeAnnotation),
+        tsNullKeyword(),
+        tsUndefinedKeyword()
+      ])
+    case 'NumberLiteralTypeAnnotation':
+      return tsLiteralType(numericLiteral(node.value!))
+    case 'NumberTypeAnnotation':
+      return tsNumberKeyword()
+    case 'StringLiteralTypeAnnotation':
+      return tsLiteralType(stringLiteral(node.value!))
+    case 'StringTypeAnnotation':
+      return tsStringKeyword()
+    case 'ThisTypeAnnotation':
+      return tsThisType()
+    case 'TupleTypeAnnotation':
+      return tsTupleType(node.types.map(toTsType))
+    case 'TypeofTypeAnnotation':
+      return tsTypeQuery(getId(node.argument))
+    case 'ObjectTypeAnnotation':
+      return tsTypeLiteral([
+        ...node.properties.map(_ => {
+          if (isSpreadProperty(_)) {
+            return _
+          }
+          let s = tsPropertySignature(
+            _.key,
+            tsTypeAnnotation(toTsType(_.value))
+          )
+          s.optional = _.optional
+          return s
+          // TODO: anonymous indexers
+          // TODO: named indexers
+          // TODO: call properties
+          // TODO: variance
+        })
+        // ...node.indexers.map(_ => tSIndexSignature())
+      ])
+    case 'UnionTypeAnnotation':
+      return tsUnionType(node.types.map(toTsType))
+    case 'VoidTypeAnnotation':
+      return tsVoidKeyword()
   }
 }
 
 function getId(node: FlowType): Identifier {
   switch (node.type) {
-    case 'GenericTypeAnnotation': return node.id
-    default: throw ReferenceError('typeof query must reference a node that has an id')
+    case 'GenericTypeAnnotation':
+      return node.id
+    default:
+      throw ReferenceError('typeof query must reference a node that has an id')
   }
 }
 
 function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
-
   let typeParams = undefined
 
   if (node.typeParameters) {
-    typeParams = tsTypeParameterDeclaration(node.typeParameters.params.map(_ => {
+    typeParams = tsTypeParameterDeclaration(
+      node.typeParameters.params.map(_ => {
+        // TODO: How is this possible?
+        if (isTSTypeParameter(_)) {
+          return _
+        }
 
-      // TODO: How is this possible?
-      if (isTSTypeParameter(_)) {
-        return _
-      }
-
-      let constraint = _.bound ? toTs(_.bound) : undefined
-      let default_ = _.default ? toTs(_.default) : undefined
-      let param = tsTypeParameter(constraint, default_)
-      param.name = _.name
-      return param
-    }))
+        let constraint = _.bound ? toTs(_.bound) : undefined
+        let default_ = _.default ? toTs(_.default) : undefined
+        let param = tsTypeParameter(constraint, default_)
+        param.name = _.name
+        return param
+      })
+    )
   }
 
   let f = tsFunctionType(typeParams)
@@ -178,7 +245,10 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
   // Params
   if (node.params) {
     // TODO: Rest params
-    let paramNames = node.params.map(_ => _.name).filter(_ => _ !== null).map(_ => (_ as Identifier).name)
+    let paramNames = node.params
+      .map(_ => _.name)
+      .filter(_ => _ !== null)
+      .map(_ => (_ as Identifier).name)
     f.parameters = node.params.map(_ => {
       let name = _.name && _.name.name
 

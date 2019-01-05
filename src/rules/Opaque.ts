@@ -10,11 +10,13 @@ addRule('Opaque', warnings => ({
         path.node.loc.start.line,
         path.node.loc.start.column
       ])
-      path.replaceWith(typeAlias(
-        (path.node as any).id,
-        (path.node as any).typeParameters,
-        (path.node as any).impltype
-      ))
+      path.replaceWith(
+        typeAlias(
+          (path.node as any).id,
+          (path.node as any).typeParameters,
+          (path.node as any).impltype
+        )
+      )
     }
   }
 }))
