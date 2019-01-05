@@ -1,8 +1,8 @@
-import { addRule } from "../";
-import { toTs } from "../convert";
+import { addRule } from '../'
+import { toTs } from '../convert'
 
-addRule("ObjectType", () => ({
+addRule('ObjectType', () => ({
   ObjectTypeAnnotation(path) {
-    path.replaceWith(toTs(path.node));
-  },
-}));
+    path.replaceWith(toTs(path.node))
+  }
+}))

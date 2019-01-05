@@ -6,7 +6,7 @@ addRule('$Keys', () => ({
     if (path.node.id.name !== '$Keys') {
       return
     }
-    let { id } = (path.node.typeParameters.params[0] as GenericTypeAnnotation)
+    let { id } = path.node.typeParameters.params[0] as GenericTypeAnnotation
     let op = tsTypeOperator(tsTypeReference(id))
     path.replaceWith(op)
   }

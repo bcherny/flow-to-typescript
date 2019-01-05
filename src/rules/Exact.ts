@@ -10,11 +10,9 @@ addRule('Exact', warnings => ({
         path.node.loc.start.line,
         path.node.loc.start.column
       ])
-      path.replaceWith(objectTypeAnnotation(
-        path.node.properties,
-        path.node.indexers,
-        path.node.callProperties
-      ))
+      path.replaceWith(
+        objectTypeAnnotation(path.node.properties, path.node.indexers, path.node.callProperties)
+      )
     }
   }
 }))

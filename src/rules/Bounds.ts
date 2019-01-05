@@ -4,7 +4,6 @@ import { toTs } from '../convert'
 
 addRule('Bounds', () => ({
   TypeParameterDeclaration(path) {
-
     if (path.node.params.every(_ => !hasBound(_))) {
       return
     }
