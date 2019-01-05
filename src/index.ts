@@ -71,6 +71,7 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   const visitor = {}
   all.forEach(i => {
     const visGen = rules.get(i)!
+    if (!visGen) return
     const vis = visGen(warnings)
     Object.keys(vis).forEach(k => {
       if (!visitor[k]) {

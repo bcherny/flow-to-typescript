@@ -1,3 +1,4 @@
+/*
 import { objectTypeAnnotation } from '@babel/types'
 import { addRule } from '../'
 
@@ -6,3 +7,5 @@ addRule('Mixed', () => ({
     path.replaceWith(objectTypeAnnotation([]))
   }
 }))
+
+*/

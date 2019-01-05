@@ -1,9 +1,12 @@
-import { identifier, objectTypeIndexer } from '@babel/types'
 import { addRule } from '../'
-import { generateFreeIdentifier } from '../utils'
+import { toTs } from '../convert'
+//import { identifier, objectTypeIndexer } from '@babel/types'
+//import { generateFreeIdentifier } from '../utils'
 
 addRule('Indexer', () => ({
   ObjectTypeIndexer(path) {
+    path.replaceWith(toTs(path.node))
+    /*
     if (path.node.id !== null) {
       return
     }
@@ -15,5 +18,6 @@ addRule('Indexer', () => ({
         path.node.value
       )
     )
+    */
   }
 }))
