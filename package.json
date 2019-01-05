@@ -15,6 +15,8 @@
     "build:watch": "tsc -w",
     "clean": "rm -rf ./dist",
     "lint": "tslint src/**/*.ts",
+    "prettier": "prettier 'src/**/*.[tj]s'",
+    "prettier:fix": "yarn prettier --write",
     "prepublishOnly": "npm run clean && npm run lint && npm run build -- -d",
     "pretest": "npm run build",
     "tdd": "concurrently -k 'npm run build:watch' 'npm run test:watch'",
@@ -38,6 +40,7 @@
     "ava": "^0.24.0",
     "concurrently": "^3.5.1",
     "flow-bin": "^0.59.0",
+    "prettier": "^1.15.3",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2"
   },
