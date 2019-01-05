@@ -48,7 +48,8 @@ import {
   TSTypeParameterDeclaration,
   TSTypeParameter,
   TSTypeAliasDeclaration,
-  TypeAlias
+  TypeAlias,
+  TSTypeAnnotation
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -66,6 +67,7 @@ export function typeAliasToTsTypeAliasDeclaration(
   return tsTypeAliasDeclaration(node.id, typeParameters, toTs(node.right))
 }
 
+/*
 let depth = 0
 let stack: string[] = []
 export function toTs(node: Flow | TSType): TSType {
@@ -90,9 +92,12 @@ export function toTs(node: Flow | TSType): TSType {
     }
   }
 }
+*/
 
-// TODO: Add overloads
-export function _toTs(node: Flow | TSType): TSType {
+// TODO: Add more overloads
+export function toTs(node: TypeAnnotation): TSTypeAnnotation
+export function toTs(node: Flow): TSType
+export function toTs(node: Flow | TSType): TSType | TSTypeAnnotation {
   switch (node.type) {
     // TS types
     // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
@@ -132,6 +137,9 @@ export function _toTs(node: Flow | TSType): TSType {
     // @ts-ignore
     case 'TSPropertySignature':
       return node
+
+    case 'TypeAnnotation':
+      return tsTypeAnnotation(toTsType(node))
 
     // Flow types
     case 'AnyTypeAnnotation':
@@ -196,8 +204,6 @@ export function _toTs(node: Flow | TSType): TSType {
       // @ts-ignore
       return tsQualifiedName(toTsTypeName(node.qualification), node.id)
 
-    case 'TypeAnnotation':
-    //return tsTypeAnnotation(toTsType(node))
     case 'ClassImplements':
     case 'DeclareClass':
     case 'DeclareFunction':
@@ -218,7 +224,7 @@ export function _toTs(node: Flow | TSType): TSType {
     case 'ExistentialTypeParam':
       console.log('WUT')
       console.dir(node)
-      throw 'wut'
+      throw new Error('Not implemented')
   }
   throw new Error(`Note type not understood: '${node.type}'`)
 }
@@ -235,7 +241,7 @@ export function toTsTypeName(
   throw new Error('Could not convert to TS identifier')
 }
 
-export function toTsType(node: FlowType): TSType {
+export function toTsType(node: FlowType | TypeAnnotation): TSType {
   if (node.type.match(/^TS[A-Z]/)) {
     // @ts-ignore
     return node
@@ -251,6 +257,9 @@ export function toTsType(node: FlowType): TSType {
           node.type
         }' passed to toTsType, instead use \`tsTypeReference(toTsTypeName(node))\``
       )
+
+    case 'TypeAnnotation':
+      return toTsType(node.typeAnnotation)
 
     case 'AnyTypeAnnotation':
       return tsAnyKeyword()
@@ -315,11 +324,6 @@ export function toTsType(node: FlowType): TSType {
     case 'TypeofTypeAnnotation':
       return tsTypeQuery(getId(node.argument))
 
-    // @ts-ignore
-    case 'TypeAnnotation':
-      // @ts-ignore
-      return toTs(node.typeAnnotation)
-
     case 'ObjectTypeAnnotation':
       return tsTypeLiteral([
         ...node.properties.map(
@@ -358,13 +362,14 @@ function toTsIndexSignature(indexer: ObjectTypeIndexer): TSTypeElement {
   id.typeAnnotation = tsTypeAnnotation(toTsType(indexer.key))
   return tsIndexSignature([id], tsTypeAnnotation(toTsType(indexer.value)))
 }
+
 function toTsTypeParameter(_: TypeParameter): TSTypeParameter {
   // TODO: How is this possible?
   if (isTSTypeParameter(_)) {
     return _
   }
 
-  let constraint = _.bound ? toTs(_.bound) : undefined
+  let constraint = _.bound ? toTsType(_.bound) : undefined
   let default_ = _.default ? toTs(_.default) : undefined
   let param = tsTypeParameter(constraint, default_)
   param.name = _.name
