@@ -20,15 +20,12 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  console.log('Parse...')
   const parsed = parse(code, {
     plugins: ['classProperties', 'flow', 'objectRestSpread'],
     sourceType: 'module'
   })
-  console.log('Convert...')
   let [warnings, ast] = await convert(parsed)
 
-  console.log('Warnings...')
   warnings.forEach(([message, issueURL, line, column]) => {
     console.log(
       `Warning: ${message} (at ${relative(
@@ -38,7 +35,6 @@ export async function compile(code: string, filename: string) {
     )
   })
 
-  console.log('Strip flow annotations...')
   return addTrailingSpace(
     trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code)
   )
@@ -48,7 +44,6 @@ export async function compile(code: string, filename: string) {
  * @internal
  */
 export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
-  console.log('Loading rules...')
   // load rules directory
   await Promise.all(
     sync(resolve(__dirname, './rules/*.js')).map(_ => import(_))
@@ -85,9 +80,7 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
       }
     })
   })
-  console.log(`Traversing...`)
   traverse(ast, visitor)
-  console.log('Done')
 
   return [warnings, ast]
 }
