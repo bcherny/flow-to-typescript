@@ -248,7 +248,17 @@ export function toTsType(node: FlowType): TSType {
     case 'FunctionTypeAnnotation':
       return functionToTsType(node)
     case 'GenericTypeAnnotation': {
-      if (node.typeParameters && node.typeParameters.params.length) {
+      if (node.id.name === 'Exact') {
+        /*
+        warnings.push([
+          `$Exact types can't be expressed in TypeScript`,
+          'https://github.com/Microsoft/TypeScript/issues/12936',
+          path.node.loc.start.line,
+          path.node.loc.start.column
+        ])
+        */
+        return toTsType(node.typeParameters!.params[0])
+      } else if (node.typeParameters && node.typeParameters.params.length) {
         return tsTypeReference(
           toTsTypeName(node.id),
           tsTypeParameterInstantiation(
@@ -301,9 +311,9 @@ export function toTsType(node: FlowType): TSType {
             }
             let s = tsPropertySignature(
               _.key,
-              tsTypeAnnotation(toTsType((_ as any).typeAnnotation))
+              tsTypeAnnotation(toTsType(_.value))
             )
-            s.optional = (_ as any).optional
+            s.optional = _.optional
             return s
             // TODO: anonymous indexers
             // TODO: named indexers
