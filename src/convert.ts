@@ -49,7 +49,16 @@ import {
   TSTypeParameter,
   TSTypeAliasDeclaration,
   TypeAlias,
-  TSTypeAnnotation
+  TSTypeAnnotation,
+  InterfaceDeclaration,
+  TSInterfaceDeclaration,
+  tsInterfaceDeclaration,
+  InterfaceExtends,
+  TSExpressionWithTypeArguments,
+  tsInterfaceBody,
+  ObjectTypeAnnotation,
+  ObjectTypeProperty,
+  TSPropertySignature
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -96,8 +105,18 @@ export function toTs(node: Flow | TSType): TSType {
 
 // TODO: Add more overloads
 export function toTs(node: TypeAnnotation): TSTypeAnnotation
+export function toTs(node: InterfaceDeclaration): TSInterfaceDeclaration
+export function toTs(node: InterfaceExtends): TSExpressionWithTypeArguments
+export function toTs(node: ObjectTypeProperty): TSPropertySignature
 export function toTs(node: Flow): TSType
-export function toTs(node: Flow | TSType): TSType | TSTypeAnnotation {
+export function toTs(
+  node: Flow | TSType | InterfaceDeclaration | InterfaceExtends
+):
+  | TSType
+  | TSTypeAnnotation
+  | TSInterfaceDeclaration
+  | TSExpressionWithTypeArguments
+  | TSPropertySignature {
   switch (node.type) {
     // TS types
     // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
@@ -141,6 +160,22 @@ export function toTs(node: Flow | TSType): TSType | TSTypeAnnotation {
     case 'TypeAnnotation':
       return tsTypeAnnotation(toTsType(node))
 
+    case 'InterfaceDeclaration':
+      return tsInterfaceDeclaration(
+        node.id,
+        node.typeParameters
+          ? tsTypeParameterDeclaration(
+              node.typeParameters.params.map(toTsTypeParameter)
+            )
+          : null,
+        node.extends && node.extends.length
+          ? node.extends.map(
+              (_: InterfaceExtends): TSExpressionWithTypeArguments => toTs(_)
+            )
+          : null,
+        tsInterfaceBody(objectTypeAnnotationProperties(node.body))
+      )
+
     // Flow types
     case 'AnyTypeAnnotation':
     case 'ArrayTypeAnnotation':
@@ -179,7 +214,10 @@ export function toTs(node: Flow | TSType): TSType | TSTypeAnnotation {
       let _ = tsPropertySignature(node.key, tsTypeAnnotation(toTs(node.value)))
       _.optional = node.optional
       _.readonly = node.variance && node.variance.kind === 'minus'
-      // @ts-ignore
+      // TODO: anonymous indexers
+      // TODO: named indexers
+      // TODO: call properties
+      // TODO: variance
       return _
 
     case 'TypeCastExpression':
@@ -325,27 +363,7 @@ export function toTsType(node: FlowType | TypeAnnotation): TSType {
       return tsTypeQuery(getId(node.argument))
 
     case 'ObjectTypeAnnotation':
-      return tsTypeLiteral([
-        ...node.properties.map(
-          (_): TSTypeElement => {
-            if (_.type === 'ObjectTypeSpreadProperty') {
-              // @ts-ignore
-              return _
-            }
-            let s = tsPropertySignature(
-              _.key,
-              tsTypeAnnotation(toTsType(_.value))
-            )
-            s.optional = _.optional
-            return s
-            // TODO: anonymous indexers
-            // TODO: named indexers
-            // TODO: call properties
-            // TODO: variance
-          }
-        ),
-        ...(node.indexers || []).map(toTsIndexSignature)
-      ])
+      return tsTypeLiteral(objectTypeAnnotationProperties(node))
     case 'UnionTypeAnnotation':
       return tsUnionType(node.types.map(toTs))
     case 'VoidTypeAnnotation':
@@ -438,4 +456,21 @@ function hasBound(node: Node): node is BoundedTypeParameter {
 
 interface BoundedTypeParameter extends TypeParameter {
   bound: TypeAnnotation
+}
+
+function objectTypeAnnotationProperties(
+  node: ObjectTypeAnnotation
+): Array<TSTypeElement> {
+  return [
+    ...node.properties.map(
+      (_): TSTypeElement => {
+        if (_.type === 'ObjectTypeSpreadProperty') {
+          // @ts-ignore
+          return _
+        }
+        return toTs(_)
+      }
+    ),
+    ...(node.indexers || []).map(toTsIndexSignature)
+  ]
 }
