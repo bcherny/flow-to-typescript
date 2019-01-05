@@ -1,4 +1,9 @@
-import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from '@babel/types'
+import {
+  isTypeParameter,
+  Node,
+  TypeAnnotation,
+  TypeParameter
+} from '@babel/types'
 import { addRule } from '../'
 import { toTs } from '../convert'
 

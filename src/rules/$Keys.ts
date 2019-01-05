@@ -1,4 +1,8 @@
-import { GenericTypeAnnotation, tsTypeOperator, tsTypeReference } from '@babel/types'
+import {
+  GenericTypeAnnotation,
+  tsTypeOperator,
+  tsTypeReference
+} from '@babel/types'
 import { addRule } from '../'
 
 addRule('$Keys', () => ({

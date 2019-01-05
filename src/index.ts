@@ -39,7 +39,9 @@ export async function compile(code: string, filename: string) {
   })
 
   console.log('Strip flow annotations...')
-  return addTrailingSpace(trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code))
+  return addTrailingSpace(
+    trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code)
+  )
 }
 
 /**
@@ -48,7 +50,9 @@ export async function compile(code: string, filename: string) {
 export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   console.log('Loading rules...')
   // load rules directory
-  await Promise.all(sync(resolve(__dirname, './rules/*.js')).map(_ => import(_)))
+  await Promise.all(
+    sync(resolve(__dirname, './rules/*.js')).map(_ => import(_))
+  )
 
   let warnings: Warning[] = []
   const order = [

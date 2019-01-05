@@ -217,7 +217,9 @@ export function toTsType(node: FlowType): TSType {
       if (node.typeParameters && node.typeParameters.params.length) {
         return tsTypeReference(
           toTsTypeName(node.id),
-          tsTypeParameterInstantiation(node.typeParameters.params.map(p => toTsType(p)))
+          tsTypeParameterInstantiation(
+            node.typeParameters.params.map(p => toTsType(p))
+          )
         )
       } else {
         return toTsType(node.id)
@@ -247,7 +249,11 @@ export function toTsType(node: FlowType): TSType {
     case 'NullLiteralTypeAnnotation':
       return tsNullKeyword()
     case 'NullableTypeAnnotation':
-      return tsUnionType([toTsType(node.typeAnnotation), tsNullKeyword(), tsUndefinedKeyword()])
+      return tsUnionType([
+        toTsType(node.typeAnnotation),
+        tsNullKeyword(),
+        tsUndefinedKeyword()
+      ])
     case 'NumberLiteralTypeAnnotation':
       return tsLiteralType(numericLiteral(node.value!))
     case 'NumberTypeAnnotation':
@@ -330,7 +336,10 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     console.dir(node.returnType)
     throw new Error(`Could not convert return type '${node.returnType.type}'`)
   }
-  let f = tsFunctionType(typeParams, node.returnType ? tsTypeAnnotation(returnTypeType) : undefined)
+  let f = tsFunctionType(
+    typeParams,
+    node.returnType ? tsTypeAnnotation(returnTypeType) : undefined
+  )
   // Params
   if (node.params) {
     // TODO: Rest params

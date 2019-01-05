@@ -9,7 +9,11 @@ addRule('Indexer', () => ({
     }
 
     path.replaceWith(
-      objectTypeIndexer(identifier(generateFreeIdentifier([])), path.node.key, path.node.value)
+      objectTypeIndexer(
+        identifier(generateFreeIdentifier([])),
+        path.node.key,
+        path.node.value
+      )
     )
   }
 }))

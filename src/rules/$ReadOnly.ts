@@ -7,6 +7,8 @@ addRule('$ReadOnly', () => ({
       return
     }
 
-    path.replaceWith(genericTypeAnnotation(identifier('Readonly'), path.node.typeParameters))
+    path.replaceWith(
+      genericTypeAnnotation(identifier('Readonly'), path.node.typeParameters)
+    )
   }
 }))
