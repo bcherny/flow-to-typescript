@@ -273,6 +273,10 @@ export function toTsType(node: FlowType): TSType {
         ])
         */
         return toTsType(node.typeParameters!.params[0])
+      } else if (node.id.name === '$ReadOnly') {
+        // Rename to 'Readonly'
+        node.id.name = 'Readonly'
+        return toTsType(node)
       } else if (node.typeParameters && node.typeParameters.params.length) {
         return tsTypeReference(
           toTsTypeName(node.id),
