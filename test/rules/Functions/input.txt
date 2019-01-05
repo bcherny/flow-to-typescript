@@ -19,3 +19,7 @@ export default function Functions3(
 ) {
   return "";
 }
+
+function Functions4(a: string, b: C | (d: E) => F, g: G) {
+  return ''
+}
