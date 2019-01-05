@@ -1,3 +1,13 @@
 type Functions1 = (a: number, b: string) => string;
 type Functions2 = (a: number, b: string) => string;
-type Functions3 = (a: number, b: A & B) => string;
+export default function Functions3(a: number, b: A & B, {
+  c,
+  d,
+  e
+}: {
+  c: number;
+  d: string;
+  e: boolean;
+}) {
+  return "";
+}
