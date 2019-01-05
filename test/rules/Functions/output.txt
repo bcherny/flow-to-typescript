@@ -1,2 +1,3 @@
 type Functions1 = (a: number, b: string) => string;
 type Functions2 = (a: number, b: string) => string;
+type Functions3 = (a: number, b: A & B) => string;

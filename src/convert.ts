@@ -374,7 +374,10 @@ export function toTsType(node: FlowType | TypeAnnotation): TSType {
       )
       const propertyType = tsTypeLiteral(properties)
       return spreads.length
-        ? tsIntersectionType([propertyType, ...spreads])
+        ? tsIntersectionType([
+            ...(properties.length ? [propertyType] : []),
+            ...spreads
+          ])
         : propertyType
     }
     case 'UnionTypeAnnotation':
