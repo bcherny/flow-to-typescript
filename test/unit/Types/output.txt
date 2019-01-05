@@ -14,3 +14,8 @@ type H = {
 type I = {
   a: <T extends number, U>(b: T, c: U | number) => T;
 };
+type J = {
+  a: string;
+} & H & {
+  c: string;
+};

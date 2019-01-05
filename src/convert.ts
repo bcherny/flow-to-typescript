@@ -161,6 +161,12 @@ export function toTs(
       return tsTypeAnnotation(toTsType(node))
 
     case 'InterfaceDeclaration':
+      const { properties, spreads } = objectTypeAnnotationPropertiesAndSpreads(
+        node.body
+      )
+      if (spreads.length) {
+        throw new Error('Spreads in interfaces unsupported')
+      }
       return tsInterfaceDeclaration(
         node.id,
         node.typeParameters
@@ -173,7 +179,7 @@ export function toTs(
               (_: InterfaceExtends): TSExpressionWithTypeArguments => toTs(_)
             )
           : null,
-        tsInterfaceBody(objectTypeAnnotationProperties(node.body))
+        tsInterfaceBody(properties)
       )
 
     // Flow types
@@ -362,8 +368,15 @@ export function toTsType(node: FlowType | TypeAnnotation): TSType {
     case 'TypeofTypeAnnotation':
       return tsTypeQuery(getId(node.argument))
 
-    case 'ObjectTypeAnnotation':
-      return tsTypeLiteral(objectTypeAnnotationProperties(node))
+    case 'ObjectTypeAnnotation': {
+      const { properties, spreads } = objectTypeAnnotationPropertiesAndSpreads(
+        node
+      )
+      const propertyType = tsTypeLiteral(properties)
+      return spreads.length
+        ? tsIntersectionType([propertyType, ...spreads])
+        : propertyType
+    }
     case 'UnionTypeAnnotation':
       return tsUnionType(node.types.map(toTs))
     case 'VoidTypeAnnotation':
@@ -458,19 +471,28 @@ interface BoundedTypeParameter extends TypeParameter {
   bound: TypeAnnotation
 }
 
-function objectTypeAnnotationProperties(
+function objectTypeAnnotationPropertiesAndSpreads(
   node: ObjectTypeAnnotation
-): Array<TSTypeElement> {
-  return [
-    ...node.properties.map(
-      (_): TSTypeElement => {
-        if (_.type === 'ObjectTypeSpreadProperty') {
-          // @ts-ignore
-          return _
-        }
-        return toTs(_)
-      }
-    ),
-    ...(node.indexers || []).map(toTsIndexSignature)
-  ]
+): { properties: TSTypeElement[]; spreads: TSType[] } {
+  const spreads: TSType[] = []
+  const properties: TSTypeElement[] = []
+
+  node.properties.forEach(_ => {
+    if (_.type === 'ObjectTypeSpreadProperty') {
+      spreads.push(toTs(_.argument))
+    } else {
+      properties.push(toTs(_))
+    }
+  })
+
+  if (node.indexers) {
+    node.indexers.forEach(_ => {
+      properties.push(toTsIndexSignature(_))
+    })
+  }
+
+  return {
+    properties,
+    spreads
+  }
 }
