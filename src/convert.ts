@@ -44,13 +44,30 @@ import {
   TypeAnnotation,
   TypeParameter,
   ObjectTypeIndexer,
-  tsIndexSignature
+  tsIndexSignature,
+  TSTypeParameterDeclaration,
+  TSTypeParameter,
+  TSTypeAliasDeclaration,
+  TypeAlias
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
+export function typeAliasToTsTypeAliasDeclaration(
+  node: TypeAlias
+): TSTypeAliasDeclaration {
+  if (node.type !== 'TypeAlias') {
+    throw new Error('Expected TypeAlias!')
+  }
+  const typeParameters: TSTypeParameterDeclaration | null = node.typeParameters
+    ? tsTypeParameterDeclaration(
+        node.typeParameters.params.map(toTsTypeParameter)
+      )
+    : null
+  return tsTypeAliasDeclaration(node.id, typeParameters, toTs(node.right))
+}
+
 let depth = 0
 let stack: string[] = []
-// TODO: Add overloads
 export function toTs(node: Flow | TSType): TSType {
   try {
     depth++
@@ -73,6 +90,8 @@ export function toTs(node: Flow | TSType): TSType {
     }
   }
 }
+
+// TODO: Add overloads
 export function _toTs(node: Flow | TSType): TSType {
   switch (node.type) {
     // TS types
@@ -177,10 +196,6 @@ export function _toTs(node: Flow | TSType): TSType {
       // @ts-ignore
       return tsQualifiedName(toTsTypeName(node.qualification), node.id)
 
-    case 'TypeAlias':
-      // @ts-ignore
-      return tsTypeAliasDeclaration(node.id, null, toTs(node.right))
-
     case 'TypeAnnotation':
     //return tsTypeAnnotation(toTsType(node))
     case 'ClassImplements':
@@ -248,7 +263,7 @@ export function toTsType(node: FlowType): TSType {
     case 'FunctionTypeAnnotation':
       return functionToTsType(node)
     case 'GenericTypeAnnotation': {
-      if (node.id.name === 'Exact') {
+      if (node.id.name === '$Exact') {
         /*
         warnings.push([
           `$Exact types can't be expressed in TypeScript`,
@@ -339,6 +354,18 @@ function toTsIndexSignature(indexer: ObjectTypeIndexer): TSTypeElement {
   id.typeAnnotation = tsTypeAnnotation(toTsType(indexer.key))
   return tsIndexSignature([id], tsTypeAnnotation(toTsType(indexer.value)))
 }
+function toTsTypeParameter(_: TypeParameter): TSTypeParameter {
+  // TODO: How is this possible?
+  if (isTSTypeParameter(_)) {
+    return _
+  }
+
+  let constraint = _.bound ? toTs(_.bound) : undefined
+  let default_ = _.default ? toTs(_.default) : undefined
+  let param = tsTypeParameter(constraint, default_)
+  param.name = _.name
+  return param
+}
 
 function getId(node: FlowType): Identifier {
   switch (node.type) {
@@ -354,18 +381,7 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
 
   if (node.typeParameters) {
     typeParams = tsTypeParameterDeclaration(
-      node.typeParameters.params.map(_ => {
-        // TODO: How is this possible?
-        if (isTSTypeParameter(_)) {
-          return _
-        }
-
-        let constraint = _.bound ? toTs(_.bound) : undefined
-        let default_ = _.default ? toTs(_.default) : undefined
-        let param = tsTypeParameter(constraint, default_)
-        param.name = _.name
-        return param
-      })
+      node.typeParameters.params.map(toTsTypeParameter)
     )
   }
 

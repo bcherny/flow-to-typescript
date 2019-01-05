@@ -1,8 +1,8 @@
 import { addRule } from '..'
-import { toTs } from '../convert'
+import { typeAliasToTsTypeAliasDeclaration } from '../convert'
 
 addRule('TypeAlias', () => ({
   TypeAlias(path) {
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(typeAliasToTsTypeAliasDeclaration(path.node))
   }
 }))
