@@ -26,11 +26,8 @@ async function main(argv: minimist.ParsedArgs) {
   const argOut: string = argv._[1] || argv.output
 
   try {
-    console.log('Flow')
     const flow = await readInput(argIn)
-    console.log('TypeScript')
     const ts = await compile(flow, argIn)
-    console.log('Write')
     await writeOutput(ts, argOut)
   } catch (e) {
     console.error(e)
