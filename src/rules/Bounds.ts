@@ -5,7 +5,7 @@ import {
   TypeParameter
 } from '@babel/types'
 import { addRule } from '../'
-import { toTs } from '../convert'
+import { toTS } from '../convert'
 
 addRule('Bounds', () => ({
   TypeParameterDeclaration(path) {
@@ -13,7 +13,7 @@ addRule('Bounds', () => ({
       return
     }
 
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTS(path.node))
   }
 }))
 

@@ -6,9 +6,9 @@ addRule('Exact', warnings => ({
     if ((path.node as any).exact) {
       warnings.push([
         `Exact types can't be expressed in TypeScript`,
-        'https://github.com/Microsoft/TypeScript/issues/12936',
-        path.node.loc.start.line,
-        path.node.loc.start.column
+        '🗳️ Vote: https://github.com/Microsoft/TypeScript/issues/12936',
+        path.node.loc!.start.line,
+        path.node.loc!.start.column
       ])
       path.replaceWith(
         objectTypeAnnotation(

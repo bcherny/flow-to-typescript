@@ -1,8 +1,8 @@
-import { objectTypeAnnotation } from '@babel/types'
+import * as t from '@babel/types'
 import { addRule } from '../'
 
 addRule('Mixed', () => ({
   MixedTypeAnnotation(path) {
-    path.replaceWith(objectTypeAnnotation([]))
+    path.replaceWith(t.tsUnknownKeyword())
   }
 }))

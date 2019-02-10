@@ -1,17 +1,19 @@
-import {
-  GenericTypeAnnotation,
-  tsTypeOperator,
-  tsTypeReference
-} from '@babel/types'
+import * as t from '@babel/types'
 import { addRule } from '../'
 
 addRule('$Keys', () => ({
   GenericTypeAnnotation(path) {
-    if (path.node.id.name !== '$Keys') {
+    if (!t.isIdentifier(path.node.id) || path.node.id.name !== '$Keys') {
       return
     }
-    let { id } = path.node.typeParameters.params[0] as GenericTypeAnnotation
-    let op = tsTypeOperator(tsTypeReference(id))
+    if (!path.node.typeParameters) {
+      return
+    }
+    let [param] = path.node.typeParameters.params
+    if (!t.isGenericTypeAnnotation(param) || !t.isIdentifier(param.id)) {
+      return
+    }
+    let op = t.tsTypeOperator(t.tsTypeReference(param.id))
     path.replaceWith(op)
   }
 }))

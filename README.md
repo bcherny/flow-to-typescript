@@ -58,6 +58,7 @@ compile(file, path).then(ts =>
 |   ✅  | Null        | `null`                                  | `null` |
 |   ✅  | Undefined   | `typeof undefined`                      | `undefined` |
 |   ✅  | Mixed       | `mixed`                                 | `unknown` |
+|   ✅  | Bottom type | `empty`                                 | `never` |
 |   ✅  | Void        | `void`                                  | `void` |
 |   ✅  | Functions   | `(A, B) => C`                           | `(a: A, b: B) => C` |
 |   ⚔  | Predicates (0) | `(a: A, b: B) => %checks`            | `(a: A, b: B) => C` |

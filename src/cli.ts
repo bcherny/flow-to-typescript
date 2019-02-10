@@ -35,9 +35,9 @@ async function main(argv: minimist.ParsedArgs) {
   }
 }
 
-function readInput(argIn?: string) {
+function readInput(argIn?: string): Promise<string> {
   if (!argIn) {
-    return new Promise<string>(stdin)
+    return new Promise(resolve => resolve(stdin))
   }
   return readFile(resolve(process.cwd(), argIn), 'utf-8')
 }

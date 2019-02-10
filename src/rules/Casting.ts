@@ -1,8 +1,8 @@
 import { addRule } from '../'
-import { toTs } from '../convert'
+import { toTS } from '../convert'
 
 addRule('Casting', () => ({
   TypeCastExpression(path) {
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTS(path.node))
   }
 }))
