@@ -72,33 +72,6 @@ export function typeAliasToTsTypeAliasDeclaration(
   return tsTypeAliasDeclaration(node.id, typeParameters, toTs(node.right))
 }
 
-/*
-let depth = 0
-let stack: string[] = []
-export function toTs(node: Flow | TSType): TSType {
-  try {
-    depth++
-    stack.push('  '.repeat(depth) + ` >${node.type}`)
-    return _toTs(node)
-  } catch (e) {
-    if (!e.logged) {
-      e.logged = true
-      stack.push('  '.repeat(depth) + ` !${node.type}`)
-      console.error(stack.join('\n'))
-      console.error(e)
-      console.dir(node, { depth: 8 })
-    }
-    throw e
-  } finally {
-    stack.push('  '.repeat(depth) + ` <${node.type}`)
-    depth--
-    if (depth === 0) {
-      stack = []
-    }
-  }
-}
-*/
-
 // TODO: Add more overloads
 export function toTs(node: TypeAnnotation): TSTypeAnnotation
 export function toTs(node: InterfaceDeclaration): TSInterfaceDeclaration
