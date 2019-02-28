@@ -16,3 +16,7 @@ type H = {
 type I = {
   a<T: number, U>(b: T, c: U | number): T;
 }
+type J = {
+  a: string,
+  ...H,
+}

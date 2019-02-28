@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import { sync } from 'glob'
 import { readFile } from 'mz/fs'
 import { basename, resolve } from 'path'

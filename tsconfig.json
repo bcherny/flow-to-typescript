@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "declaration": false,
-    "lib": [
-      "es2015"
-    ],
+    "lib": ["es2015", "esnext.asynciterable"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -14,9 +13,7 @@
     "preserveConstEnums": false,
     "sourceMap": true,
     "strict": true,
-    "target": "es2015"
+    "target": "esnext"
   },
-  "exclude": [
-    "**/*.js.flow"
-  ]
+  "exclude": ["**/*.js.flow"]
 }
