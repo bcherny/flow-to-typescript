@@ -7,13 +7,13 @@ import {
 import { addRule } from '../'
 import { toTs } from '../convert'
 
-addRule('Bounds', () => ({
+addRule('Bounds', (warnings) => ({
   TypeParameterDeclaration(path) {
     if (path.node.params.every(_ => !hasBound(_))) {
       return
     }
 
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTs(path.node, warnings))
   }
 }))
 

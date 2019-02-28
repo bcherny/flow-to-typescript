@@ -11,6 +11,6 @@ addRule('Variance', warnings => ({
         path.node.loc.start.column
       ])
     }
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTs(path.node, warnings))
   }
 }))

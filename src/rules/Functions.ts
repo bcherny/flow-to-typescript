@@ -1,8 +1,8 @@
 import { addRule } from '../'
 import { toTs } from '../convert'
 
-addRule('Functions', () => ({
+addRule('Functions', (warnings) => ({
   FunctionTypeAnnotation(path) {
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTs(path.node, warnings))
   }
 }))

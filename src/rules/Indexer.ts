@@ -1,8 +1,8 @@
 import { addRule } from '../'
 import { toTs } from '../convert'
 
-addRule('Indexer', () => ({
+addRule('Indexer', (warnings) => ({
   ObjectTypeIndexer(path) {
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(toTs(path.node, warnings))
   }
 }))

@@ -7,7 +7,7 @@ import { dropWhile, pullAt } from 'lodash'
 import { EOL } from 'os'
 import { relative, resolve } from 'path'
 
-type Warning = [string, string, number, number]
+export type Warning = [string, string, number, number]
 type Rule = (warnings: Warning[]) => Visitor<Node>
 
 let rules = new Map<string, Rule>()
