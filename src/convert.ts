@@ -145,7 +145,7 @@ export function toTs(
           : null,
         node.extends && node.extends.length
           ? node.extends.map(
-              (_: InterfaceExtends): TSExpressionWithTypeArguments => toTs(_)
+              (_) => toTs(_)
             )
           : null,
         tsInterfaceBody(properties)
