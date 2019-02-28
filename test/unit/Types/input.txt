@@ -19,5 +19,4 @@ type I = {
 type J = {
   a: string,
   ...H,
-  ...{c: string}
 }
