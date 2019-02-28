@@ -444,7 +444,7 @@ interface BoundedTypeParameter extends TypeParameter {
 function objectTypeAnnotationPropertiesAndSpreads(
   node: ObjectTypeAnnotation,
   warnings: Warning[]
-): { properties: TSTypeElement[]; spreads: TSType[] } {
+) {
   const spreads: TSType[] = []
   const properties: TSTypeElement[] = []
 
