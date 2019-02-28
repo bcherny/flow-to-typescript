@@ -235,8 +235,6 @@ export function toTs(
     case 'ClassProperty':
     // @ts-ignore
     case 'ExistentialTypeParam':
-      console.log('WUT')
-      console.dir(node)
       throw new Error('Not implemented')
   }
   throw new Error(`Note type not understood: '${node.type}'`)
