@@ -45,7 +45,6 @@ import {
   TypeParameter,
   ObjectTypeIndexer,
   tsIndexSignature,
-  TSTypeParameterDeclaration,
   TSTypeParameter,
   TSTypeAliasDeclaration,
   TypeAlias,
@@ -68,7 +67,7 @@ export function typeAliasToTsTypeAliasDeclaration(
   if (node.type !== 'TypeAlias') {
     throw new Error('Expected TypeAlias!')
   }
-  const typeParameters: TSTypeParameterDeclaration | null = node.typeParameters
+  const typeParameters = node.typeParameters
     ? tsTypeParameterDeclaration(
         node.typeParameters.params.map(toTsTypeParameter)
       )
