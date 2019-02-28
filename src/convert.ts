@@ -64,9 +64,6 @@ import { generateFreeIdentifier } from './utils'
 export function typeAliasToTsTypeAliasDeclaration(
   node: TypeAlias
 ): TSTypeAliasDeclaration {
-  if (node.type !== 'TypeAlias') {
-    throw new Error('Expected TypeAlias!')
-  }
   const typeParameters = node.typeParameters
     ? tsTypeParameterDeclaration(
         node.typeParameters.params.map(toTsTypeParameter)
