@@ -57,7 +57,8 @@ import {
   tsInterfaceBody,
   ObjectTypeAnnotation,
   ObjectTypeProperty,
-  TSPropertySignature
+  TSPropertySignature,
+  isIdentifier
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 import { Warning } from '.';
@@ -280,28 +281,29 @@ export function toTsType(node: FlowType | TypeAnnotation, warnings: Warning[]): 
     case 'FunctionTypeAnnotation':
       return functionToTsType(node, warnings)
     case 'GenericTypeAnnotation': {
-      if (node.id.name === '$Exact') {
-        warnings.push([
-          `$Exact types can't be expressed in TypeScript`,
-          'https://github.com/Microsoft/TypeScript/issues/12936',
-          node.loc ? node.loc.start.line : -1,
-          node.loc ? node.loc.start.column : -1
-        ])
-        return toTsType(node.typeParameters!.params[0], warnings)
-      } else if (node.id.name === '$ReadOnly') {
-        // Rename to 'Readonly'
-        node.id.name = 'Readonly'
-        return toTsType(node, warnings)
-      } else if (node.typeParameters && node.typeParameters.params.length) {
-        return tsTypeReference(
-          toTsTypeName(node.id),
-          tsTypeParameterInstantiation(
-            node.typeParameters.params.map(p => toTsType(p, warnings))
+      if (isIdentifier(node.id)) {
+        if (node.id.name === '$Exact') {
+          warnings.push([
+            `$Exact types can't be expressed in TypeScript`,
+            'https://github.com/Microsoft/TypeScript/issues/12936',
+            node.loc ? node.loc.start.line : -1,
+            node.loc ? node.loc.start.column : -1
+          ])
+          return toTsType(node.typeParameters!.params[0], warnings)
+        } else if (node.id.name === '$ReadOnly') {
+          // Rename to 'Readonly'
+          node.id.name = 'Readonly'
+          return toTsType(node, warnings)
+        } else if (node.typeParameters && node.typeParameters.params.length) {
+          return tsTypeReference(
+            toTsTypeName(node.id),
+            tsTypeParameterInstantiation(
+              node.typeParameters.params.map(p => toTsType(p, warnings))
+            )
           )
-        )
-      } else {
-        return tsTypeReference(toTsTypeName(node.id))
+        }
       }
+      return tsTypeReference(toTsTypeName(node.id))
     }
     case 'IntersectionTypeAnnotation':
       return tsIntersectionType(node.types.map((_) => toTsType(_, warnings)))
@@ -376,6 +378,9 @@ function toTsTypeParameter(_: TypeParameter, warnings: Warning[]): TSTypeParamet
 function getId(node: FlowType): Identifier {
   switch (node.type) {
     case 'GenericTypeAnnotation':
+      if (!isIdentifier(node.id)) {
+        throw ReferenceError('typeof query must reference a an identifier')
+      }
       return node.id
     default:
       throw ReferenceError('typeof query must reference a node that has an id')

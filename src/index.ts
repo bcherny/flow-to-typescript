@@ -8,6 +8,7 @@ import { EOL } from 'os'
 import { relative, resolve } from 'path'
 
 export type Warning = [string, string, number, number]
+type ObjVisitor<T> = { [key: string]: Visitor<T>[keyof Visitor<T>] }
 type Rule = (warnings: Warning[]) => Visitor<Node>
 
 let rules = new Map<string, Rule>()
@@ -63,23 +64,25 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   ]
   const keys = [...rules.keys()]
   const all = [...order, ...keys.filter(k => order.indexOf(k) < 0)]
-  const visitor: { [key: string]: Visitor<Node> } = {}
-  all.forEach(i => {
+  const visitor = all.reduce<ObjVisitor<Node>>((agg, i) => {
     const visGen = rules.get(i)!
-    if (!visGen) return
-    const vis = visGen(warnings)
+    if (!visGen) return agg
+    const vis = visGen(warnings) as ObjVisitor<Node>
     Object.keys(vis).forEach(k => {
-      if (!visitor[k]) {
-        visitor[k] = vis[k]
+      if (!agg[k]) {
+        agg[k] = vis[k]
       } else {
-        const oldVis = visitor[k]
-        visitor[k] = (...args: any[]) => {
+        const oldVis = agg[k]
+        agg[k] = (...args: any[]) => {
+          // @ts-ignore: ts doesn't think this is a function because of funky Visitor<T> type 
           oldVis(...args)
+          // @ts-ignore
           vis[k](...args)
         }
       }
     })
-  })
+    return agg
+  }, {})
   traverse(ast, visitor)
 
   return [warnings, ast]
