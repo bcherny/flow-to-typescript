@@ -12,6 +12,6 @@ export default function Functions3(a: number, b: A & B, {
   return "";
 }
 
-function Functions4(a: string, b: C | ((d: E) => F), g: G) {
+function Functions4(a: string, b: C | (d: E) => F, g: G) {
   return '';
 }
