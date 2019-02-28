@@ -401,7 +401,6 @@ function functionToTsType(node: FunctionTypeAnnotation, warnings: Warning[]): TS
 
   const returnTypeType = node.returnType ? toTs(node.returnType, warnings) : null
   if (node.returnType && !returnTypeType) {
-    console.dir(node.returnType)
     throw new Error(`Could not convert return type '${node.returnType.type}'`)
   }
   let f = tsFunctionType(
