@@ -120,14 +120,6 @@ export function toTs(
     case 'TSUndefinedKeyword':
     case 'TSUnionType':
     case 'TSVoidKeyword':
-    // @ts-ignore
-    case 'TSTypeAnnotation':
-    // @ts-ignore
-    case 'TSTypeParameterDeclaration':
-    // @ts-ignore
-    case 'TSAsExpression':
-    // @ts-ignore
-    case 'TSPropertySignature':
       return node
 
     case 'TypeAnnotation':
