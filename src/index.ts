@@ -1,5 +1,5 @@
-import { parse } from '@babel/babylon'
 import generate from '@babel/generator'
+import { parse } from '@babel/parser'
 import traverse, { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
 import { sync } from 'glob'

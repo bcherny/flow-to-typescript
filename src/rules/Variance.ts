@@ -7,8 +7,8 @@ addRule('Variance', warnings => ({
       warnings.push([
         `Contravariance can't be expressed in TypeScript`,
         'https://github.com/Microsoft/TypeScript/issues/1394',
-        path.node.loc.start.line,
-        path.node.loc.start.column
+        path.node.loc!.start.line,
+        path.node.loc!.start.column
       ])
     }
     path.replaceWith(toTs(path.node))
