@@ -16,7 +16,6 @@
     "no-internal-module": true,
     "no-invalid-this": true,
     "no-reference": true,
-    "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
     "object-literal-key-quotes": [true, "as-needed"],
@@ -35,15 +34,6 @@
     "semicolon": [true, "never"],
     "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
     "triple-equals": [true, "allow-null-check"],
-    "use-isnan": true,
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-module",
-      "check-operator",
-      "check-separator",
-      "check-type"
-    ]
+    "use-isnan": true
   }
 }
