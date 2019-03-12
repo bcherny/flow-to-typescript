@@ -74,12 +74,12 @@ export function typeAliasToTsTypeAliasDeclaration(
 }
 
 // TODO: Add more overloads
-export function toTs(node: ObjectTypeProperty): TSPropertySignature
-export function toTs(node: InterfaceExtends): TSExpressionWithTypeArguments
-export function toTs<T extends TSType>(node: T): T
-export function toTs(node: Node): TSType
-export function toTs(node: Flow): TSType
-export function toTs(node: Flow | TSType | Node): TSType | Node {
+export function _toTs(node: ObjectTypeProperty): TSPropertySignature
+export function _toTs(node: InterfaceExtends): TSExpressionWithTypeArguments
+export function _toTs<T extends TSType>(node: T): T
+export function _toTs(node: Node): TSType
+export function _toTs(node: Flow): TSType
+export function _toTs(node: Flow | TSType | Node): TSType | Node {
   switch (node.type) {
     // TS types
     // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
@@ -175,9 +175,6 @@ export function toTs(node: Flow | TSType | Node): TSType | Node {
       let _ = tsPropertySignature(node.key, tsTypeAnnotation(toTs(node.value)))
       _.optional = node.optional
       _.readonly = node.variance && node.variance.kind === 'minus'
-      _.innerComments = node.innerComments
-      _.leadingComments = node.leadingComments
-      _.trailingComments = node.trailingComments
       // TODO: anonymous indexers
       // TODO: named indexers
       // TODO: call properties
@@ -224,6 +221,18 @@ export function toTs(node: Flow | TSType | Node): TSType | Node {
   throw new Error(`Note type not understood: '${node.type}'`)
 }
 
+function copyCommentsToFrom(to: TSType | Node, from: FlowType | TSType | Node) {
+  to.leadingComments = from.leadingComments
+  to.innerComments = from.innerComments
+  to.trailingComments = from.trailingComments
+}
+
+export const toTs: typeof _toTs = node => {
+  const newNode = _toTs(node)
+  copyCommentsToFrom(newNode, node)
+  return newNode
+}
+
 export function toTsTypeName(
   node: Identifier | QualifiedTypeIdentifier
 ): Identifier | TSQualifiedName {
@@ -236,7 +245,7 @@ export function toTsTypeName(
   throw new Error('Could not convert to TS identifier')
 }
 
-export function toTsType(node: FlowType | Node): TSType {
+export function _toTsType(node: FlowType | Node): TSType {
   if (node.type.match(/^TS[A-Z]/)) {
     // @ts-ignore A `TS*` type has somehow made it into here; something's not obeying the types.
     return node
@@ -352,10 +361,22 @@ export function toTsType(node: FlowType | Node): TSType {
   }
 }
 
-function toTsIndexSignature(indexer: ObjectTypeIndexer): TSTypeElement {
+export const toTsType: typeof _toTsType = node => {
+  const newNode = _toTsType(node)
+  copyCommentsToFrom(newNode, node)
+  return newNode
+}
+
+function _toTsIndexSignature(indexer: ObjectTypeIndexer): TSTypeElement {
   const id = indexer.id ? indexer.id : identifier(generateFreeIdentifier([]))
   id.typeAnnotation = tsTypeAnnotation(toTsType(indexer.key))
   return tsIndexSignature([id], tsTypeAnnotation(toTsType(indexer.value)))
+}
+
+const toTsIndexSignature: typeof _toTsIndexSignature = indexer => {
+  const newNode = _toTsIndexSignature(indexer)
+  copyCommentsToFrom(newNode, indexer)
+  return newNode
 }
 
 function toTsTypeParameter(_: TypeParameter): TSTypeParameter {
