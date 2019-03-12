@@ -53,7 +53,8 @@ import {
   tsInterfaceBody,
   ObjectTypeAnnotation,
   ObjectTypeProperty,
-  TSPropertySignature
+  TSPropertySignature,
+  InterfaceExtends
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -70,6 +71,7 @@ export function typeAliasToTsTypeAliasDeclaration(
 
 // TODO: Add more overloads
 export function toTs(node: ObjectTypeProperty): TSPropertySignature
+export function toTs(node: InterfaceExtends): TSExpressionWithTypeArguments
 export function toTs<T extends TSType>(node: T): T
 export function toTs(node: Node): TSType
 export function toTs(node: Flow): TSType
@@ -128,7 +130,7 @@ export function toTs(node: Flow | TSType | Node): TSType | Node {
             )
           : null,
         node.extends && node.extends.length
-          ? node.extends.map((_): TSExpressionWithTypeArguments => toTs(_))
+          ? node.extends.map(_ => toTs(_))
           : null,
         tsInterfaceBody(properties)
       )
