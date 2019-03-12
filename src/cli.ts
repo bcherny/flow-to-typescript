@@ -30,8 +30,7 @@ async function main(argv: minimist.ParsedArgs) {
     const ts = await compile(flow, argIn)
     await writeOutput(ts, argOut)
   } catch (e) {
-    console.error(e)
-    //process.stderr.write(e.message)
+    process.stderr.write(e.message)
     process.exit(1)
   }
 }
