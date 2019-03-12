@@ -55,7 +55,10 @@ import {
   ObjectTypeProperty,
   TSPropertySignature,
   InterfaceExtends,
-  tsParenthesizedType
+  tsParenthesizedType,
+  RestElement,
+  FunctionTypeParam,
+  restElement
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -417,7 +420,6 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
   )
   // Params
   if (node.params) {
-    // TODO: Rest params
     let paramNames = node.params
       .map(_ => _.name)
       .filter(_ => _ !== null)
@@ -439,9 +441,21 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
 
       return id
     })
+    if (node.rest) {
+      f.parameters.push(toTsRestParameter(node.rest))
+    }
   }
 
   return f
+}
+
+function toTsRestParameter(rest: FunctionTypeParam): RestElement {
+  if (!rest.name) {
+    throw new Error('Rest parameter must have name')
+  }
+  const restEl = restElement(getId(rest.name))
+  restEl.typeAnnotation = tsTypeAnnotation(toTsType(rest.typeAnnotation))
+  return restEl
 }
 
 function hasBound(node: Node): node is BoundedTypeParameter {

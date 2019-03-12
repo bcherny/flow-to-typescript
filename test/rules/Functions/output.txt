@@ -1,5 +1,6 @@
 type Functions1 = (a: number, b: string) => string;
 type Functions2 = (a: number, b: string) => string;
+type Functions3 = (...args: string[]) => string;
 export default function Functions3(a: number, b: A & B, {
   c,
   d,
@@ -13,5 +14,9 @@ export default function Functions3(a: number, b: A & B, {
 }
 
 function Functions4(a: string, b: C | ((d: E) => F), g: G) {
+  return '';
+}
+
+function deprecate(fn: (...input: Array<any>) => string, message: string) {
   return '';
 }
