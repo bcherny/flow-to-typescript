@@ -227,7 +227,7 @@ function copyCommentsToFrom(to: TSType | Node, from: FlowType | TSType | Node) {
   to.trailingComments = from.trailingComments
 }
 
-export const toTs: typeof _toTs = node => {
+export const toTs: typeof _toTs = (node: any) => {
   const newNode = _toTs(node)
   copyCommentsToFrom(newNode, node)
   return newNode
@@ -280,8 +280,8 @@ export function _toTsType(node: FlowType | Node): TSType {
         warnings.push([
           `$Exact types can't be expressed in TypeScript`,
           'https://github.com/Microsoft/TypeScript/issues/12936',
-          path.node.loc.start.line,
-          path.node.loc.start.column
+          path.node.loc ? path.node.loc.start.line : 0,
+          path.node.loc ? path.node.loc.start.column : 0
         ])
         */
         return toTsType(node.typeParameters!.params[0])

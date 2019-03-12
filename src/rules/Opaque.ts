@@ -7,8 +7,8 @@ addRule('Opaque', warnings => ({
       warnings.push([
         `Opaque types can't be expressed in TypeScript`,
         'https://github.com/Microsoft/TypeScript/issues/202',
-        path.node.loc.start.line,
-        path.node.loc.start.column
+        path.node.loc ? path.node.loc.start.line : 0,
+        path.node.loc ? path.node.loc.start.column : 0
       ])
       path.replaceWith(
         typeAlias(

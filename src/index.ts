@@ -61,19 +61,19 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   ]
   const keys = [...rules.keys()]
   const all = [...order, ...keys.filter(k => order.indexOf(k) < 0)]
-  const visitor = {}
+  const visitor: { [key: string]: any } = {}
   all.forEach(i => {
     const visGen = rules.get(i)!
     if (!visGen) return
     const vis = visGen(warnings)
     Object.keys(vis).forEach(k => {
       if (!visitor[k]) {
-        visitor[k] = vis[k]
+        visitor[k] = (vis as any)[k]
       } else {
         const oldVis = visitor[k]
-        visitor[k] = (...args) => {
+        visitor[k] = (...args: any[]) => {
           oldVis(...args)
-          vis[k](...args)
+          ;(vis as any)[k](...args)
         }
       }
     })
