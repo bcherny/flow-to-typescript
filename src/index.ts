@@ -51,9 +51,7 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
 
   let warnings: Warning[] = []
   const order = [
-    '$Exact',
     '$Keys',
-    '$ReadOnly',
     'Bounds',
     'Casting',
     'Exact',
