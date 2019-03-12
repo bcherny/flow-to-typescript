@@ -354,11 +354,17 @@ function toTsTypeParameter(_: TypeParameter): TSTypeParameter {
   return param
 }
 
-function getId(node: Identifier): Identifier
-function getId(node: FlowType): Identifier
-function getId(node: Identifier | FlowType): Identifier {
+export function getId(node: Identifier | QualifiedTypeIdentifier): Identifier
+export function getId(node: FlowType): Identifier
+export function getId(
+  node: Identifier | QualifiedTypeIdentifier | FlowType
+): Identifier {
   switch (node.type) {
     case 'Identifier':
+      return node
+    case 'QualifiedTypeIdentifier':
+      // TODO: convert this properly!
+      // @ts-ignore
       return node
     case 'GenericTypeAnnotation':
       if (node.id.type === 'Identifier') {
