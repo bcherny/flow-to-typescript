@@ -259,6 +259,8 @@ export function toTsType(node: FlowType | Node): TSType {
     case 'GenericTypeAnnotation': {
       if (node.id.type === 'Identifier' && node.id.name === '$Exact') {
         /*
+        Cannot uncomment this, because there's no `warnings` to push to in scope.
+
         warnings.push([
           `$Exact types can't be expressed in TypeScript`,
           'https://github.com/Microsoft/TypeScript/issues/12936',
