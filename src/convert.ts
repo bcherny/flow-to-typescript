@@ -54,7 +54,8 @@ import {
   ObjectTypeAnnotation,
   ObjectTypeProperty,
   TSPropertySignature,
-  InterfaceExtends
+  InterfaceExtends,
+  tsParenthesizedType
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
@@ -327,7 +328,15 @@ export function toTsType(node: FlowType | Node): TSType {
         : propertyType
     }
     case 'UnionTypeAnnotation':
-      return tsUnionType(node.types.map(toTs))
+      return tsUnionType(
+        node.types.map(type => {
+          const tsType = toTs(type)
+          if (tsType.type === 'TSFunctionType') {
+            return tsParenthesizedType(tsType)
+          }
+          return tsType
+        })
+      )
     case 'VoidTypeAnnotation':
       return tsUndefinedKeyword()
     case 'ExistsTypeAnnotation':
