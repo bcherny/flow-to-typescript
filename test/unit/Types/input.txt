@@ -10,7 +10,7 @@ type G = {
   a: number
 }
 type H = {
-  a: number,
+  a: number, // comment
   b: ?string
 }
 type I = {

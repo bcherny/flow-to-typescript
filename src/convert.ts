@@ -172,6 +172,9 @@ export function toTs(node: Flow | TSType | Node): TSType | Node {
       let _ = tsPropertySignature(node.key, tsTypeAnnotation(toTs(node.value)))
       _.optional = node.optional
       _.readonly = node.variance && node.variance.kind === 'minus'
+      _.innerComments = node.innerComments
+      _.leadingComments = node.leadingComments
+      _.trailingComments = node.trailingComments
       // TODO: anonymous indexers
       // TODO: named indexers
       // TODO: call properties

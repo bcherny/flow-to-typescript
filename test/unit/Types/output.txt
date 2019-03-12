@@ -9,6 +9,7 @@ type G = {
 };
 type H = {
   a: number;
+  // comment
   b: string | null | undefined;
 };
 type I = {
