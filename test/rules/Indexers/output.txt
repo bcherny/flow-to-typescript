@@ -1,3 +1,4 @@
 type Indexer = {
+  // comment
   [a: string]: boolean;
 };
