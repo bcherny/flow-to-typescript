@@ -2,7 +2,7 @@ import { typeAlias } from '@babel/types'
 import { addRule } from '../'
 
 addRule('Opaque', warnings => ({
-  enter(path) {
+  enter(path: any) {
     if (path.type === 'OpaqueType') {
       warnings.push([
         `Opaque types can't be expressed in TypeScript`,

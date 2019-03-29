@@ -1,7 +1,7 @@
 import { addRule } from '../'
 
 addRule('$Exact', warnings => ({
-  GenericTypeAnnotation(path) {
+  GenericTypeAnnotation(path: any) {
     if (path.node.id.name !== '$Exact') {
       return
     }

@@ -8,8 +8,8 @@ import { addRule } from '../'
 import { toTs } from '../convert'
 
 addRule('Bounds', () => ({
-  TypeParameterDeclaration(path) {
-    if (path.node.params.every(_ => !hasBound(_))) {
+  TypeParameterDeclaration(path: any) {
+    if (path.node.params.every((_: any) => !hasBound(_))) {
       return
     }
 

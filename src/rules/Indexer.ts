@@ -3,7 +3,7 @@ import { addRule } from '../'
 import { generateFreeIdentifier } from '../utils'
 
 addRule('Indexer', () => ({
-  ObjectTypeIndexer(path) {
+  ObjectTypeIndexer(path: any) {
     if (path.node.id !== null) {
       return
     }
