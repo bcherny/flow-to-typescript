@@ -64,7 +64,7 @@ export function toTs(node: Flow | TSType): TSType {
     case 'TSSymbolKeyword':
     case 'TSThisType':
     case 'TSTupleType':
-    case 'TSTypeAnnotation':
+    case ('TSTypeAnnotation' as any):
     case 'TSTypeLiteral':
     case 'TSTypeOperator':
     case 'TSTypePredicate':
@@ -73,10 +73,10 @@ export function toTs(node: Flow | TSType): TSType {
     case 'TSUndefinedKeyword':
     case 'TSUnionType':
     case 'TSVoidKeyword':
-    case 'TSTypeParameterDeclaration':
-    case 'TSAsExpression':
-    case 'TSPropertySignature':
-      return node
+    case ('TSTypeParameterDeclaration' as any):
+    case ('TSAsExpression' as any):
+    case ('TSPropertySignature' as any):
+      return node as TSType
 
     // Flow types
     case 'AnyTypeAnnotation':
@@ -89,7 +89,7 @@ export function toTs(node: Flow | TSType): TSType {
     case 'MixedTypeAnnotation':
     case 'NullableTypeAnnotation':
     case 'NullLiteralTypeAnnotation':
-    case 'NumericLiteralTypeAnnotation':
+    case ('NumericLiteralTypeAnnotation' as any):
     case 'NumberTypeAnnotation':
     case 'StringLiteralTypeAnnotation':
     case 'StringTypeAnnotation':
@@ -100,16 +100,16 @@ export function toTs(node: Flow | TSType): TSType {
     case 'ObjectTypeAnnotation':
     case 'UnionTypeAnnotation':
     case 'VoidTypeAnnotation':
-      return toTsType(node)
+      return toTsType(node as FlowType)
 
     case 'ObjectTypeProperty':
       let _ = tsPropertySignature(node.key, tsTypeAnnotation(toTs(node.value)))
       _.optional = node.optional
       _.readonly = node.variance && node.variance.kind === 'minus'
-      return _
+      return ((_ as unknown) as TSType)
 
     case 'TypeCastExpression':
-      return tsAsExpression(node.expression, toTs(node.typeAnnotation))
+      return ((tsAsExpression(node.expression, toTs(node.typeAnnotation)) as unknown) as TSType)
 
     case 'TypeParameterDeclaration':
       let params = node.params.map(_ => {
@@ -122,17 +122,17 @@ export function toTs(node: Flow | TSType): TSType {
         return p
       })
 
-      return tsTypeParameterDeclaration(params)
+      return ((tsTypeParameterDeclaration(params) as unknown) as TSType)
 
     case 'ClassImplements':
-    case 'ClassProperty':
+    case ('ClassProperty' as any):
     case 'DeclareClass':
     case 'DeclareFunction':
     case 'DeclareInterface':
     case 'DeclareModule':
     case 'DeclareTypeAlias':
     case 'DeclareVariable':
-    case 'ExistentialTypeParam':
+    case ('ExistentialTypeParam' as any):
     case 'FunctionTypeParam':
     case 'InterfaceExtends':
     case 'InterfaceDeclaration':
@@ -142,6 +142,8 @@ export function toTs(node: Flow | TSType): TSType {
     case 'ObjectTypeIndexer':
     case 'QualifiedTypeIdentifier':
       throw 'wut'
+    default:
+      throw `unexpected type ${node.type}`
   }
 }
 
@@ -158,7 +160,7 @@ export function toTsType(node: FlowType): TSType {
     case 'FunctionTypeAnnotation':
       return functionToTsType(node)
     case 'GenericTypeAnnotation':
-      return tsTypeReference(node.id)
+      return tsTypeReference(node.id as any)
     case 'IntersectionTypeAnnotation':
       return tsIntersectionType(node.types.map(toTsType))
     case 'MixedTypeAnnotation':
@@ -192,10 +194,10 @@ export function toTsType(node: FlowType): TSType {
             return _
           }
           let s = tsPropertySignature(
-            _.key,
-            tsTypeAnnotation(toTsType(_.value))
+            (_ as any).key,
+            tsTypeAnnotation(toTsType((_ as any).value))
           )
-          s.optional = _.optional
+          s.optional = (_ as any).optional
           return s
           // TODO: anonymous indexers
           // TODO: named indexers
@@ -203,18 +205,20 @@ export function toTsType(node: FlowType): TSType {
           // TODO: variance
         })
         // ...node.indexers.map(_ => tSIndexSignature())
-      ])
+      ] as any)
     case 'UnionTypeAnnotation':
       return tsUnionType(node.types.map(toTsType))
     case 'VoidTypeAnnotation':
       return tsVoidKeyword()
+    default:
+      throw `unexpected type ${node.type}`
   }
 }
 
 function getId(node: FlowType): Identifier {
   switch (node.type) {
     case 'GenericTypeAnnotation':
-      return node.id
+      return node.id as Identifier
     default:
       throw ReferenceError('typeof query must reference a node that has an id')
   }
@@ -240,7 +244,7 @@ function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {
     )
   }
 
-  let f = tsFunctionType(typeParams)
+  let f = tsFunctionType(typeParams, [])
 
   // Params
   if (node.params) {

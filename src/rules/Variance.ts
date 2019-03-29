@@ -2,7 +2,7 @@ import { addRule } from '../'
 import { toTs } from '../convert'
 
 addRule('Variance', warnings => ({
-  ObjectTypeProperty(path) {
+  ObjectTypeProperty(path: any) {
     if (path.node.variance && path.node.variance.kind === 'plus') {
       warnings.push([
         `Contravariance can't be expressed in TypeScript`,

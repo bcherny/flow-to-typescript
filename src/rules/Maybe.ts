@@ -7,7 +7,7 @@ import {
 import { addRule } from '../'
 
 addRule('Maybe', () => ({
-  NullableTypeAnnotation(path) {
+  NullableTypeAnnotation(path: any) {
     path.replaceWith(
       unionTypeAnnotation([
         (path.node as any).typeAnnotation,

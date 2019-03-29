@@ -2,7 +2,7 @@ import { objectTypeAnnotation } from '@babel/types'
 import { addRule } from '../'
 
 addRule('Exact', warnings => ({
-  ObjectTypeAnnotation(path) {
+  ObjectTypeAnnotation(path: any) {
     if ((path.node as any).exact) {
       warnings.push([
         `Exact types can't be expressed in TypeScript`,
