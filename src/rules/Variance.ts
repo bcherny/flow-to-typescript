@@ -1,5 +1,5 @@
 import { addRule } from '../'
-import { toTs } from '../convert'
+import { ts } from '../convert'
 
 addRule('Variance', warnings => ({
   ObjectTypeProperty(path) {
@@ -11,6 +11,6 @@ addRule('Variance', warnings => ({
         path.node.loc!.start.column
       ])
     }
-    path.replaceWith(toTs(path.node))
+    path.replaceWith(ts(path.node))
   }
 }))
