@@ -1,7 +1,11 @@
+import { isIdentifier } from '@babel/types'
 import { addRule } from '../'
 
 addRule('$Exact', warnings => ({
   GenericTypeAnnotation(path) {
+    if (!isIdentifier(path.node.id)) {
+      return
+    }
     if (path.node.id.name !== '$Exact') {
       return
     }

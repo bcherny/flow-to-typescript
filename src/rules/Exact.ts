@@ -3,7 +3,7 @@ import { addRule } from '../'
 
 addRule('Exact', warnings => ({
   ObjectTypeAnnotation(path) {
-    if ((path.node as any).exact) {
+    if (path.node.exact) {
       warnings.push([
         `Exact types can't be expressed in TypeScript`,
         'https://github.com/Microsoft/TypeScript/issues/12936',
