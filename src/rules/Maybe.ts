@@ -10,7 +10,7 @@ addRule('Maybe', () => ({
   NullableTypeAnnotation(path) {
     path.replaceWith(
       unionTypeAnnotation([
-        (path.node as any).typeAnnotation,
+        path.node.typeAnnotation,
         nullLiteralTypeAnnotation(),
         genericTypeAnnotation(identifier('undefined'))
       ])
