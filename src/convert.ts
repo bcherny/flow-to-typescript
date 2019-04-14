@@ -186,6 +186,89 @@ type TS = {
   (node: t.Directive): t.Directive
   (node: t.VariableDeclarator): t.VariableDeclarator
 
+  (node: t.ArgumentPlaceholder): t.ArgumentPlaceholder
+  (node: t.CatchClause): t.CatchClause
+  (node: t.Directive): t.Directive
+  (node: t.VariableDeclarator): t.VariableDeclarator
+  (node: t.ClassBody): t.ClassBody
+  (node: t.ClassMethod): t.ClassMethod
+  (node: t.ClassPrivateMethod): t.ClassPrivateMethod
+  (node: t.ClassPrivateProperty): t.ClassPrivateProperty
+  (node: t.DeclaredPredicate): t.DeclaredPredicate
+  (node: t.Decorator): t.Decorator
+  (node: t.DirectiveLiteral): t.DirectiveLiteral
+  (node: t.EmptyTypeAnnotation): t.TSUnknownKeyword
+  (node: t.ExistsTypeAnnotation): t.ExistsTypeAnnotation // TODO
+  (node: t.Import): t.Import
+  (node: t.InferredPredicate): t.InferredPredicate
+  (node: t.InterfaceTypeAnnotation): t.InterfaceTypeAnnotation
+  (node: t.InterpreterDirective): t.InterpreterDirective
+  (node: t.Noop): t.Noop
+  (node: t.ObjectMethod): t.ObjectMethod
+  (node: t.ObjectProperty): t.ObjectProperty
+  (node: t.ObjectTypeInternalSlot): t.ObjectTypeInternalSlot
+  (node: t.ObjectTypeSpreadProperty): t.ObjectTypeSpreadProperty
+  (node: t.OptionalCallExpression): t.OptionalCallExpression
+  (node: t.OptionalMemberExpression): t.OptionalMemberExpression
+  (node: t.PipelineBareFunction): t.PipelineBareFunction
+  (node: t.PipelinePrimaryTopicReference): t.PipelinePrimaryTopicReference
+  (node: t.PipelineTopicExpression): t.PipelineTopicExpression
+  (node: t.Placeholder): t.Placeholder
+  (node: t.PrivateName): t.PrivateName
+  (node: t.SpreadElement): t.SpreadElement
+  (node: t.SwitchCase): t.SwitchCase
+  (node: t.TSAnyKeyword): t.TSAnyKeyword
+  (node: t.TSArrayType): t.TSArrayType
+  (node: t.TSBooleanKeyword): t.TSBooleanKeyword
+  (node: t.TSCallSignatureDeclaration): t.TSCallSignatureDeclaration
+  (node: t.TSConditionalType): t.TSConditionalType
+  (node: t.TSConstructSignatureDeclaration): t.TSConstructSignatureDeclaration
+  (node: t.TSConstructorType): t.TSConstructorType
+  (node: t.TSDeclareMethod): t.TSDeclareMethod
+  (node: t.TSEnumMember): t.TSEnumMember
+  (node: t.TSExpressionWithTypeArguments): t.TSExpressionWithTypeArguments
+  (node: t.TSExternalModuleReference): t.TSExternalModuleReference
+  (node: t.TSFunctionType): t.TSFunctionType
+  (node: t.TSImportType): t.TSImportType
+  (node: t.TSIndexSignature): t.TSIndexSignature
+  (node: t.TSIndexedAccessType): t.TSIndexedAccessType
+  (node: t.TSInferType): t.TSInferType
+  (node: t.TSInterfaceBody): t.TSInterfaceBody
+  (node: t.TSIntersectionType): t.TSIntersectionType
+  (node: t.TSLiteralType): t.TSLiteralType
+  (node: t.TSMappedType): t.TSMappedType
+  (node: t.TSMethodSignature): t.TSMethodSignature
+  (node: t.TSModuleBlock): t.TSModuleBlock
+  (node: t.TSNeverKeyword): t.TSNeverKeyword
+  (node: t.TSNullKeyword): t.TSNullKeyword
+  (node: t.TSNumberKeyword): t.TSNumberKeyword
+  (node: t.TSObjectKeyword): t.TSObjectKeyword
+  (node: t.TSOptionalType): t.TSOptionalType
+  (node: t.TSParenthesizedType): t.TSParenthesizedType
+  (node: t.TSPropertySignature): t.TSPropertySignature
+  (node: t.TSQualifiedName): t.TSQualifiedName
+  (node: t.TSRestType): t.TSRestType
+  (node: t.TSStringKeyword): t.TSStringKeyword
+  (node: t.TSSymbolKeyword): t.TSSymbolKeyword
+  (node: t.TSThisType): t.TSThisType
+  (node: t.TSTupleType): t.TSTupleType
+  (node: t.TSTypeAnnotation): t.TSTypeAnnotation
+  (node: t.TSTypeLiteral): t.TSTypeLiteral
+  (node: t.TSTypeOperator): t.TSTypeOperator
+  (node: t.TSTypeParameter): t.TSTypeParameter
+  (node: t.TSTypeParameterDeclaration): t.TSTypeParameterDeclaration
+  (node: t.TSTypeParameterInstantiation): t.TSTypeParameterInstantiation
+  (node: t.TSTypePredicate): t.TSTypePredicate
+  (node: t.TSTypeQuery): t.TSTypeQuery
+  (node: t.TSTypeReference): t.TSTypeReference
+  (node: t.TSUndefinedKeyword): t.TSUndefinedKeyword
+  (node: t.TSUnionType): t.TSUnionType
+  (node: t.TSUnknownKeyword): t.TSUnknownKeyword
+  (node: t.TSVoidKeyword): t.TSVoidKeyword
+  (node: t.TemplateElement): t.TemplateElement
+  (node: t.TypeParameter): t.TypeParameter
+  (node: t.Variance): t.Variance
+
   // Catch-alls
   (node: t.Expression): t.Expression
   (node: t.LVal): t.LVal
