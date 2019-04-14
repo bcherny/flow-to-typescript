@@ -2,10 +2,6 @@ import { booleanLiteral, File, Flow, FunctionTypeAnnotation, Identifier, identif
 import * as t from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
-export function convert(f: File): File {
-  return ts(f)
-}
-
 type AnyNode = AnyNonFlowNode | Flow
 type AnyNonFlowNode = LVal | t.Statement | t.Declaration | TSType | VariableDeclarator
   | t.Expression | t.Literal | t.ModuleSpecifier | t.JSX
@@ -276,190 +272,25 @@ type TS = {
   (node: AnyNode): AnyNonFlowNode
 }
 
-export let ts: TS = (node: Node) => {
-  switch (node.type) {
+type TSToFlowMap = {
+  Identifier: t.Identifier
+}
 
-    case 'File': return t.file(ts(node.program), node.comments, node.tokens)
-    case 'Program': return t.program(map(node.body, _ => ts(_)), node.directives)
+type RemainingNodeTypes = Exclude<t.Node['type'], keyof TSToFlowMap>
+type AllNodesMap = TSToFlowMap & {
+  [T in RemainingNodeTypes]: Extract<t.Node, {type: T}>
+}
 
-    // Statements
-    case 'VariableDeclaration': return t.variableDeclaration(node.kind, map(node.declarations, _ => ts(_)))
-    case 'VariableDeclarator': return t.variableDeclarator(ts(node.id), node.init)
-    case 'BlockStatement': return t.blockStatement(map(node.body, _ => ts(_)), map(node.directives, _ => ts(_)))
-    case 'DoWhileStatement': return t.doWhileStatement(ts(node.test), ts(node.body))
-    case 'ExpressionStatement': return t.expressionStatement(ts(node.expression))
-    case 'ForInStatement': return t.forInStatement(ts(node.left), ts(node.right), ts(node.body))
-    case 'ForStatement': return t.forStatement(ts(node.init), ts(node.test), ts(node.update), ts(node.body))
-    case 'FunctionDeclaration': return t.functionDeclaration(ts(node.id), map(node.params, ts), ts(node.body), node.generator, node.async)
-    case 'IfStatement': return t.ifStatement(ts(node.test), ts(node.consequent), ts(node.alternate))
-    case 'LabeledStatement': return t.labeledStatement(ts(node.label))
-    case 'ReturnStatement': return t.returnStatement(ts(node.argument))
-    case 'SwitchStatement': return t.switchStatement(ts(node.discriminant), map(node.cases, ts))
-    case 'ThrowStatement': return t.throwStatement(ts(node.argument))
-    case 'TryStatement': return t.tryStatement(ts(node.block), ts(node.handler), ts(node.finalizer))
-    case 'WhileStatement': return t.whileStatement(ts(node.test), ts(node.body))
-    case 'WithStatement': return t.withStatement(ts(node.object), ts(node.body))
-    case 'ClassDeclaration': return t.classDeclaration(ts(node.id), ts(node.superClass), ts(node.body), map(node.decorators, ts))
-    case 'ClassProperty': return t.classProperty(node.key, node.value, ts(node.typeAnnotation!), node.decorators, node.computed, node.abstract, node.accessibility, node.definite, node.optional, node.readonly) // TODO: static
-    case 'ExportAllDeclaration': return t.exportAllDeclaration(ts(node.source))
-    case 'ExportDefaultDeclaration': return t.exportDefaultDeclaration(ts(node.declaration))
-    case 'ExportNamedDeclaration': return t.exportNamedDeclaration(ts(node.declaration), node.specifiers.map(_ => ts(_)), ts(node.source))
-    case 'ForOfStatement': return t.forOfStatement(ts(node.left), ts(node.right), ts(node.body))
-    case 'ImportDeclaration': return t.importDeclaration(map(node.specifiers, ts), ts(node.source))
-    case 'BreakStatement': return t.breakStatement(ts(node.label))
-    case 'ContinueStatement': return t.continueStatement(ts(node.label))
-
-    case 'DebuggerStatement':
-    case 'EmptyStatement':
-      return node
-
-    // Flow types
-    case 'ClassImplements': return node // TODO
-    case 'DeclareClass':
-      let cd = t.classDeclaration(ts(node.id), ts(node.extends), ts(node.body))
-      cd.declare = true
-      return cd
-    case 'DeclareFunction':
-      let fd = t.functionDeclaration(ts(node.id), node)
-      if (node.id.typeAnnotation && t.isFunctionTypeAnnotation(node.id.typeAnnotation)) {
-        fd.params = node.id.typeAnnotation.params.map(_ => ts(_))
-        fd.returnType = ts(node.id.typeAnnotation.returnType)
-        fd.typeParameters = ts(node.id.typeAnnotation.typeParameters)
-      }
-      return fd
-    case 'DeclareInterface': return node // TODO
-    case 'DeclareModule': return node // TODO
-    case 'DeclareTypeAlias': return node // TODO
-    case 'DeclareVariable': return node // TODO
-    case 'FunctionTypeParam': return node // TODO
-    case 'InterfaceExtends': return node // TODO
-    case 'InterfaceDeclaration': return node // TODO
-    case 'TypeAlias': return node // TODO
-    case 'TypeCastExpression': return node // TODO
-    case 'TypeParameterDeclaration': return node // TODO
-    case 'TypeParameterInstantiation': return node // TODO
-    case 'ObjectTypeCallProperty': return node // TODO
-    case 'ObjectTypeIndexer': return node // TODO
-    case 'ObjectTypeProperty': return node // TODO
-    case 'QualifiedTypeIdentifier': return node // TODO
-    case 'Variance': return node // TODO
-
-    // JSX
-    case 'JSXAttribute':
-    case 'JSXClosingElement':
-    case 'JSXElement':
-    case 'JSXEmptyExpression':
-    case 'JSXExpressionContainer':
-    case 'JSXSpreadChild':
-    case 'JSXIdentifier':
-    case 'JSXMemberExpression':
-    case 'JSXNamespacedName':
-    case 'JSXOpeningElement':
-    case 'JSXSpreadAttribute':
-    case 'JSXText':
-    case 'JSXFragment':
-    case 'JSXOpeningFragment':
-    case 'JSXClosingFragment':
-      return node
-
-    // Flow type annotations
-    case 'AnyTypeAnnotation': return tsAnyKeyword()
-    case 'ArrayTypeAnnotation': return tsArrayType(ts(node.elementType))
-    case 'BooleanTypeAnnotation': return tsBooleanKeyword()
-    case 'BooleanLiteralTypeAnnotation': return tsLiteralType(booleanLiteral(node.value))
-    case 'FunctionTypeAnnotation': return functionToTsType(node)
-    case 'GenericTypeAnnotation': return tsTypeReference(node.id)
-    case 'IntersectionTypeAnnotation': return tsIntersectionType(node.types.map(_ => ts(_)))
-    case 'MixedTypeAnnotation': return tsAnyKeyword()
-    case 'NullLiteralTypeAnnotation': return tsNullKeyword()
-    case 'NullableTypeAnnotation': return tsUnionType([ts(node.typeAnnotation), tsNullKeyword(), tsUndefinedKeyword()])
-    case 'NumberLiteralTypeAnnotation': return tsLiteralType(numericLiteral(node.value))
-    case 'NumberTypeAnnotation': return tsNumberKeyword()
-    case 'StringLiteralTypeAnnotation': return tsLiteralType(stringLiteral(node.value))
-    case 'StringTypeAnnotation': return tsStringKeyword()
-    case 'ThisTypeAnnotation': return tsThisType()
-    case 'TupleTypeAnnotation': return tsTupleType(node.types.map(_ => ts(_)))
-    case 'TypeofTypeAnnotation': return tsTypeQuery(getId(node.argument))
-    case 'TypeAnnotation': return ts(node.typeAnnotation)
-    case 'ObjectTypeAnnotation': return tsTypeLiteral([
-      ...node.properties.map(_ => {
-      let s = tsPropertySignature(_.key, tsTypeAnnotation(ts(_.value)))
-      s.optional = _.optional
-      return s
-      // TODO: anonymous indexers
-      // TODO: named indexers
-      // TODO: call properties
-      // TODO: variance
-      })
-      // ...node.indexers.map(_ => tsIndexSignature())
-    ])
-    case 'UnionTypeAnnotation': return tsUnionType(map(node.types, _ => ts(_)))
-    case 'VoidTypeAnnotation': return tsVoidKeyword()
-
-    case 'ObjectTypeProperty':
-      let _ = tsPropertySignature(node.key, tsTypeAnnotation(ts(node.value)))
-      _.optional = node.optional
-      _.readonly = node.variance && node.variance.kind === 'minus'
-      return _
-
-    case 'TypeCastExpression':
-      return tsAsExpression(node.expression, ts(node.typeAnnotation))
-
-    case 'TypeParameterDeclaration':
-      let params = node.params.map(_ => {
-        let d = (_ as any as TypeParameter).default
-        let p = tsTypeParameter(
-          hasBound(_) ? ts(_.bound.typeAnnotation) : undefined,
-          d ? ts(d) : undefined
-        )
-        p.name = _.name
-        return p
-      })
-
-      return tsTypeParameterDeclaration(params)
-
-    // TS types
-    // TODO: Why does tsTs get called with TSTypes? It should only get called with Flow types.
-    case 'TSAnyKeyword':
-    case 'TSArrayType':
-    case 'TSBooleanKeyword':
-    case 'TSConstructorType':
-    case 'TSExpressionWithTypeArguments':
-    case 'TSFunctionType':
-    case 'TSIndexedAccessType':
-    case 'TSIntersectionType':
-    case 'TSLiteralType':
-    case 'TSMappedType':
-    case 'TSNeverKeyword':
-    case 'TSNullKeyword':
-    case 'TSNumberKeyword':
-    case 'TSObjectKeyword':
-    case 'TSParenthesizedType':
-    case 'TSStringKeyword':
-    case 'TSSymbolKeyword':
-    case 'TSThisType':
-    case 'TSTupleType':
-    case 'TSTypeLiteral':
-    case 'TSTypeOperator':
-    case 'TSTypePredicate':
-    case 'TSTypeQuery':
-    case 'TSTypeReference':
-    case 'TSUndefinedKeyword':
-    case 'TSUnionType':
-    case 'TSVoidKeyword':
-    case 'TSAsExpression':
-      return node
-
-    case 'TSDeclareFunction':
-    case 'TSEnumDeclaration':
-    case 'TSExportAssignment':
-    case 'TSImportEqualsDeclaration':
-    case 'TSInterfaceDeclaration':
-    case 'TSModuleDeclaration':
-    case 'TSNamespaceExportDeclaration':
-    case 'TSTypeAliasDeclaration':
-      return node
+export function convert<
+  T extends keyof AllNodesMap,
+  N extends Extract<t.Node, {type: T}>
+>(
+  node: N
+): AllNodesMap[T] {
+  if (t.isIdentifier(node)) {
+    return node
   }
+  throw `Unsupported node type ${node.type}`
 }
 
 type F<T, U> = (a: T) => U
