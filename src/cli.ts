@@ -6,11 +6,11 @@ import { sync } from "glob"
 import * as Sh from "shelljs"
 import * as Yargs from "yargs"
 //import minimist = require("minimist")
-import { readFile, writeFile } from "mz/fs"
+import { readFile, writeFile, exists } from "mz/fs"
 import { resolve } from "path"
 import * as Path from "path"
+import * as prettier from "prettier"
 
-// import * as stdin from "stdin"
 import { compile } from "./converter"
 import { getLogger } from "./log"
 
@@ -103,8 +103,14 @@ async function main(args: Args) {
   const hasPrettier = !!prettierFile
   let prettierConfig: any
   if (hasPrettier && prettierFile) {
-    checkFileOrDir("prettierFile", prettierFile)
-    prettierConfig = await readFile(prettierFile, "utf-8")
+    const resolved = Path.relative(__dirname, prettierFile) //(!prettierFile.includes(Path.sep) ? `.${Path.sep}` : "") + prettierFile
+    if (!resolved || !(await exists(prettierFile))) {
+      log.error(`Unable to resolve ${prettierFile}`)
+      process.exit(-1)
+    }
+
+    //checkFileOrDir("prettierFile", resolved)
+    prettierConfig = require(resolved)
   }
 
   const extFilter = new RegExp(ext),
@@ -121,7 +127,10 @@ async function main(args: Args) {
     log.info("Converting", file, prettierConfig)
     try {
       const inputCode = await readFile(file, "utf-8")
-      const { code: outputCode } = await compile(inputCode, inputFile)
+      let { code: outputCode } = await compile(inputCode, inputFile)
+      if (prettierConfig) {
+        outputCode = prettier.format(outputCode, prettierConfig)
+      }
 
       if (hasOutput) {
         const outputCodeLower = outputCode.toLowerCase(),
@@ -130,6 +139,7 @@ async function main(args: Args) {
 
         const outputFile = file.replace(inputFile, outputDir!!).replace(extFilter, tsExt)
         const outputFileDir = outputFile.substr(0, outputFile.lastIndexOf(Path.sep))
+
         log.info(`Writing file: ${outputFile}`)
         Sh.mkdir("-p", outputFileDir)
 

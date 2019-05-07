@@ -68,6 +68,7 @@
     "@types/lodash": "^4.14.86",
     "@types/minimist": "^1.2.0",
     "@types/mz": "^0.0.32",
+    "@types/prettier": "^1.16.3",
     "@types/shelljs": "^0.8.5",
     "ansicolor": "^1.1.83",
     "ava": "^0.24.0",
