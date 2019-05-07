@@ -33,8 +33,7 @@
       "dist\\/results"
     ],
     "testMatch": [
-      "<rootDir>/dist/test/test.js",
-      "<rootDir>/test/rules/**/*.*"
+      "<rootDir>/dist/test/test.js"
     ],
     "watchPlugins": [
       "<rootDir>/dist/test/rule-watcher-plugin"
