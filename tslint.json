@@ -23,13 +23,19 @@
     "object-literal-shorthand": true,
     "object-literal-sort-keys": true,
     "one-line": [true, "check-catch", "check-finally", "check-else", "check-open-brace"],
-    "one-variable-per-declaration": [true, "ignore-for-loop"],
-    "ordered-imports": [true],
-    "quotemark": [true, "single"],
+    "one-variable-per-declaration": [false],
+    "ordered-imports": [false],
+    "quotemark": [true, "double"],
     "semicolon": [true, "never"],
     "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
     "triple-equals": [true, "allow-null-check"],
     "use-isnan": true,
     "whitespace": [true, "check-branch", "check-decl", "check-module", "check-operator", "check-separator", "check-type"]
+  },
+  "linterOptions": {
+    "exclude": [
+      "test/rules/**/*.ts"
+    ]
   }
 }
+
