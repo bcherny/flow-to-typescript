@@ -1,4 +1,5 @@
 import { objectTypeAnnotation, ObjectTypeAnnotation } from "@babel/types"
+import { addRule } from "../rule-manager"
 
 addRule<ObjectTypeAnnotation>("Exact", warnings => ({
   ObjectTypeAnnotation(path: any) {

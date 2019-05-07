@@ -18,12 +18,12 @@ import {
   TypeAlias,
   variableDeclarator
 } from "@babel/types"
+import { toTs } from "../nodes"
 //import { getValue } from "typeguard"
 
 import { functionToTsType, toTsImplementExtends, toTsTypeParameterInstantiation } from "../nodes/basic-converters"
+import { addRule } from "../rule-manager"
 import { tsShouldDeclare } from "../utils"
-
-// import * as _ from "lodash"
 
 function toTsTypeParameterDeclaration(
   node: FunctionTypeAnnotation | DeclareClass | InterfaceDeclaration | TypeAlias | DeclareTypeAlias

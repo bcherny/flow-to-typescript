@@ -1,28 +1,7 @@
 import { GenericTypeAnnotation } from "@babel/types"
 
-import { genericTypeAnnotationToTS } from "../nodes/basic-converters"
-//
-// type ConvertVisitor<T extends Node> = {
-//   type: T["type"]
-//   test: (node: T) => boolean
-//   apply: (path: any, node: T) => Node
-// }
-//
-// type ConvertVisitors = ConvertVisitor<GenericTypeAnnotation>
-//
-// const Converters: ConvertVisitors[] = [
-//   {
-//     type: "GenericTypeAnnotation",
-//     test: node => getValue(() => (node.id as Identifier).name === "$Shape", false),
-//     apply: (path, node) => {
-//       const newNode = tsTypeReference(
-//         {...node.id,name: "Partial"} as any,
-//         toTsTypeInstantiation(node.typeParameters),
-//
-//     }
-//
-// }
-// ]
+import { genericTypeAnnotationToTS } from "../nodes"
+import { addRule } from "../rule-manager"
 
 addRule<GenericTypeAnnotation>("Built-Ins", () => ({
   GenericTypeAnnotation(path: any) {

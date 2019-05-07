@@ -40,7 +40,7 @@ import { getId, hasBound, isObjectTypeProperty } from "../utils"
 export type Flow = DefaultFlow // | NumericLiteralTypeAnnotation
 
 // TODO: Add overloads
-function toTsGlobal(node: Flow | TSType | null): TSType | null {
+export function toTs(node: Flow | TSType | null): TSType | null {
   if (!node || !node.type) return null
   const { type } = node
 
@@ -153,7 +153,7 @@ function toTsGlobal(node: Flow | TSType | null): TSType | null {
   throw "wtf"
 }
 
-function toTsTypeGlobal(node: any & FlowType): TSType | null {
+export function toTsType(node: any & FlowType): TSType | null {
   // node = (node as any).type === "TypeAnnotation" ? toTsType(node.typeAnnotation) : node
   switch (node.type) {
     case "TypeAnnotation":
@@ -237,15 +237,3 @@ function toTsTypeGlobal(node: any & FlowType): TSType | null {
   if (node.type && node.type.startsWith("TS")) return node
   else throw "wtf"
 }
-
-declare global {
-  const toTs: typeof toTsGlobal
-  const toTsType: typeof toTsTypeGlobal
-}
-
-Object.assign(global, {
-  toTs: toTsGlobal,
-  toTsType: toTsTypeGlobal
-})
-
-export {}

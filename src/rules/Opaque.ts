@@ -1,4 +1,5 @@
 import { typeAlias } from "@babel/types"
+import { addRule } from "../rule-manager"
 
 addRule("Opaque", warnings => ({
   enter(path: any) {

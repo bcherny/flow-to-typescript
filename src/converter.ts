@@ -9,6 +9,8 @@ import { sync } from "glob"
 import { dropWhile, pullAt } from "lodash"
 import { EOL } from "os"
 import { relative, resolve } from "path"
+import { rules } from "./rule-manager"
+import { CompileResult, Warning } from "./types"
 
 /**
  * Compile code producing
@@ -23,7 +25,6 @@ export async function compile(code: string, filename: string): Promise<CompileRe
       ["flow", { all: true }],
       ["decorators-legacy", { legacy: true }],
       ["classProperties", { loose: true }],
-      //"classProperties",
       "jsx",
       "objectRestSpread",
       "optionalChaining",

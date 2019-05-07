@@ -12,6 +12,7 @@ import * as Path from "path"
 
 // import * as stdin from "stdin"
 import { compile } from "./converter"
+import { getLogger } from "./log"
 
 const log = getLogger(__filename)
 

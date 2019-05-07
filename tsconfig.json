@@ -15,7 +15,12 @@
     "preserveConstEnums": false,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["*"],
+      "flow-to-typescript": ["./src/index.ts"]
+    }
   },
   "exclude": [
     "node_modules/**/*.*",

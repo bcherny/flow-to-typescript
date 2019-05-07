@@ -22,6 +22,7 @@ import {
 import { getValue, isString } from "typeguard"
 import { KVMap } from "../types/types"
 import { generateFreeIdentifier } from "../utils/index"
+import { toTs, toTsType } from "./to-typescript-mapper"
 
 const TypeMappings: KVMap<string, string> = {
   $Shape: "Partial",

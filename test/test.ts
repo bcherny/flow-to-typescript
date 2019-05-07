@@ -4,10 +4,12 @@ import * as assert from "assert"
 import { sync } from "glob"
 import * as Fs from "mz/fs"
 import { basename, resolve } from "path"
+import { CompileResult } from "../src"
 import { compile } from "../src/converter"
 import "./setup"
 
 import * as Sh from "shelljs"
+import { getLogger } from "../src/log"
 
 const log = getLogger(__filename)
 

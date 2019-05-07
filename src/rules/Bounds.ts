@@ -1,4 +1,6 @@
 import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from "@babel/types"
+import { toTs } from "../nodes"
+import { addRule } from "../rule-manager"
 
 addRule("Bounds", () => ({
   TypeParameterDeclaration(path: any) {

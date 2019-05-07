@@ -1,21 +1,5 @@
 import { Node } from "@babel/types"
-
-declare global {
-  type Warning = [string, string, number, number]
-
-  type Visitor<T extends Node, K extends string = T["type"]> = { [key in K]: any }
-  type Rule<T extends Node> = (warnings: Warning[]) => Visitor<T>
-
-  type CompileResult = {
-    inputAst: Node
-    outputAst: Node
-    code: string
-    warnings: Warning[]
-  }
-
-  const rules: Map<string, Rule<any>>
-  function addRule<T extends Node = any>(ruleName: string, rule: Rule<T>): void
-}
+import { Rule } from "./types"
 
 const BabelTypes = require("@babel/types")
 Object.values(BabelTypes.NODE_FIELDS)
@@ -31,9 +15,9 @@ Object.values(BabelTypes.NODE_FIELDS)
     })
   })
 
-const rules = new Map<string, Rule<any>>()
+export const rules = new Map<string, Rule<any>>()
 
-function addRule<T extends Node = any>(ruleName: string, rule: Rule<T>) {
+export function addRule<T extends Node = any>(ruleName: string, rule: Rule<T>) {
   if (rules.has(ruleName)) {
     throw `A rule with the name "${ruleName}" is already defined`
   }

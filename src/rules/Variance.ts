@@ -1,4 +1,6 @@
 import { ObjectTypeProperty } from "@babel/types"
+import { toTs } from "../nodes"
+import { addRule } from "../rule-manager"
 
 addRule<ObjectTypeProperty>("Variance", warnings => ({
   ObjectTypeProperty(path: any) {
