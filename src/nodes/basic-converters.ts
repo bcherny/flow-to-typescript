@@ -19,7 +19,7 @@ import {
   TSTypeReference,
   TypeParameterInstantiation
 } from "@babel/types"
-import { getValue, isString } from "typeguard"
+import { getValue, isDefined, isString } from "typeguard"
 import { KVMap } from "../types/types"
 import { generateFreeIdentifier } from "../utils/index"
 import { toTs, toTsType } from "./to-typescript-mapper"
@@ -55,8 +55,8 @@ export function toTsTypeParameterInstantiation(
 export function genericTypeAnnotationToTS(node: GenericTypeAnnotation | null): TSTypeReference | null {
   if (!node || node.type !== "GenericTypeAnnotation") return null
   const id = node.id as Identifier
-  const newName = TypeMappings[id.name] || id.name
-  if (!newName) {
+  const newName = isDefined(TypeMappings[id.name]) ? TypeMappings[id.name] : id.name
+  if (!isDefined(newName)) {
     return tsTypeReference({ ...id }, toTsTypeParameterInstantiation(node.typeParameters))
   } else if (newName === "$Keys") {
     //const subNode = getValue(() => (node.typeParameters!!.params[0] as any).name) as any
@@ -73,10 +73,11 @@ export function genericTypeAnnotationToTS(node: GenericTypeAnnotation | null): T
       toTsTypeParameterInstantiation(node.typeParameters)
     )
   } else {
-    const subNode = getValue(() => (node.typeParameters!!.params[0] as any).name) as any
+    const subNode = getValue(() => node.typeParameters!!.params[0] as any) as any,
+      subName = getValue(() => subNode.id.name, subNode.name)
     return tsTypeReference({
       ...id,
-      name: subNode.name
+      name: subName
     })
   }
 }
