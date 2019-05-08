@@ -22,19 +22,47 @@ npm install flow-to-typescript --save
 
 ### CLI
 
+*Only `-i` is required*
+
 ```sh
 # Install globally
 yarn global add flow-to-typescript
 
 # Compile a file (all of these are equivalent)
-flow2ts my/file.js.flow
-flow2ts my/file.js.flow my/file.ts
-flow2ts my/file.js.flow > my/file.ts
-flow2ts -i my/file.js.flow -o my/file.ts
-flow2ts --input my/file.js.flow --output my/file.ts
+flow2ts \
+  -i other-dir/my-flow-src-dir \
+  -o other-dir/my-ts-src-dir \
+  -e '\.js.flow$' \
+  -p other-dir/prettier.config.js \
+  -f "include-regex-filter"
+
+flow2ts [args]
+
+Options:
+  --help               Show help                                       [boolean]
+  --version            Show version number                             [boolean]
+  -i, --input          Input file or directory               [string] [required]
+  -e, --ext            Regex to match the file ext   [string] [default: "\.js$"]
+  -f, --filter         Input regex filter for excluding files           [string]
+  -o, --output         Output directory                                 [string]
+  -p, --pretty-config  Prettier config                                  [string]
+
+
 ```
 
 ### Programmatic
+
+```typescript
+import { compile, CompileResult } from 'flow-to-typescript'
+import { readFileSync, writeFileSync } from 'fs'
+
+const path = 'path/to/file.js.flow'
+const file = readFileSync(path, 'utf-8')
+
+compile(file, path).then(({code}: CompileResult) =>
+  writeFileSync('path/to/file.ts', code)
+)
+```
 
 ```js
 import { compile } from 'flow-to-typescript'
@@ -43,8 +71,8 @@ import { readFileSync, writeFileSync } from 'fs'
 let path = 'path/to/file.js.flow'
 let file = readFileSync(path, 'utf-8')
 
-compile(file, path).then(ts =>
-  writeFileSync('path/to/file.ts', ts)
+compile(file, path).then(({code}) =>
+  writeFileSync('path/to/file.ts', code)
 )
 ```
 

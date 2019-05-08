@@ -1,3 +1,6 @@
 /* @flow */
 
-type Exact = {| a: number, b: string |}
+type Exact<T : string = any> = {|
+	a: number,
+	b: T
+|}

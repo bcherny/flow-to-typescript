@@ -1,15 +1,10 @@
-import {
-  isTypeParameter,
-  Node,
-  TypeAnnotation,
-  TypeParameter
-} from '@babel/types'
-import { addRule } from '../'
-import { toTs } from '../convert'
+import { isTypeParameter, Node, TypeAnnotation, TypeParameter } from "@babel/types"
+import { toTs } from "../nodes"
+import { addRule } from "../rule-manager"
 
-addRule('Bounds', () => ({
-  TypeParameterDeclaration(path) {
-    if (path.node.params.every(_ => !hasBound(_))) {
+addRule("Bounds", () => ({
+  TypeParameterDeclaration(path: any) {
+    if (path.node.params.every((_: any) => !hasBound(_))) {
       return
     }
 

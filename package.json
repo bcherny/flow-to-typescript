@@ -12,7 +12,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc -w",
+    "build:watch": "tsc -p tsconfig.json -w",
     "clean": "rm -rf ./dist",
     "lint": "tslint src/**/*.ts && npm run prettier:check",
     "prettier": "prettier 'src/**/*.[tj]s'",
@@ -21,29 +21,69 @@
     "prepublishOnly": "npm run clean && npm run lint && npm run build -- -d",
     "pretest": "npm run build",
     "tdd": "concurrently -k 'npm run build:watch' 'npm run test:watch'",
-    "test": "ava --verbose",
-    "test:debug": "node --inspect-brk ./node_modules/ava/profile.js ./dist/test/test.js",
-    "test:watch": "ava -w"
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:ava": "ava --verbose",
+    "test:ava:debug": "node --inspect-brk ./node_modules/ava/profile.js ./dist/test/test.js",
+    "test:ava:watch": "ava -w"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "watchPathIgnorePatterns": [
+      "dist\\/results"
+    ],
+    "testMatch": [
+      "<rootDir>/dist/test/test.js"
+    ],
+    "watchPlugins": [
+      "<rootDir>/dist/test/rule-watcher-plugin"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "txt",
+      "js",
+      "json"
+    ]
   },
   "dependencies": {
-    "@babel/generator": "7.0.0-beta.38",
-    "@babel/traverse": "7.0.0-beta.38",
-    "@babel/types": "7.0.0-beta.38",
+    "@babel/generator": "^7.0.0",
+    "@babel/traverse": "^7.0.0",
+    "@babel/types": "^7.0.0",
     "glob": "^7.1.2",
-    "lodash": "^4.17.4",
-    "mz": "^2.7.0"
+    "lodash": "^4.17.11",
+    "mz": "^2.7.0",
+    "typeguard": "^0.0.13",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/babel__generator": "^7.0.2",
+    "@types/babel__traverse": "^7.0.6",
     "@types/glob": "^5.0.33",
+    "@types/jest": "^24.0.12",
     "@types/lodash": "^4.14.86",
     "@types/minimist": "^1.2.0",
     "@types/mz": "^0.0.32",
+    "@types/prettier": "^1.16.3",
+    "@types/shelljs": "^0.8.5",
+    "@typescript-eslint/typescript-estree": "^1.7.0",
+    "ansicolor": "^1.1.83",
     "ava": "^0.24.0",
     "concurrently": "^3.5.1",
     "flow-bin": "^0.59.0",
-    "prettier": "^1.15.3",
+    "jest": "^24.8.0",
+    "jest-diff": "^24.8.0",
+    "jest-matcher-utils": "^24.8.0",
+    "jest-watcher": "^24.8.0",
+    "prettier": "^1.17.0",
+    "shelljs": "^0.8.3",
+    "ts-jest": "^24.0.2",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.2"
+    "typescript": "^3.4.5"
   },
   "ava": {
     "files": [
