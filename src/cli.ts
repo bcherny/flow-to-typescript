@@ -12,12 +12,38 @@ import * as Path from "path"
 import * as prettier from "prettier"
 
 import { compile } from "./converter"
-import { getLogger } from "./log"
+import { getLogger, LogLevel, setLogThreshold } from "./log"
 
 const log = getLogger(__filename)
 
-const args = Yargs.scriptName("flow2ts")
+const yargs = Yargs.scriptName("flow2ts")
   .usage("$0 [args]")
+  .option("debug", {
+    type: "boolean",
+    default: false
+  })
+  .option("v", {
+    alias: "verbose",
+    type: "boolean",
+    default: false
+  })
+  .option("q", {
+    alias: "quiet",
+    type: "boolean",
+    describe: "Quiet output",
+    default: false
+  })
+  .option("b", {
+    alias: "bail",
+    type: "boolean",
+    describe: "Bail on error",
+    default: false
+  })
+  .option("d", {
+    alias: "dts",
+    type: "boolean",
+    default: false
+  })
   .option("i", {
     requiresArg: true,
     alias: "input",
@@ -55,28 +81,20 @@ const args = Yargs.scriptName("flow2ts")
     type: "string"
   })
 
-//log.info("args", process.argv.join(","))
-//log.info("yargs", args)
+const args = yargs.argv
 
-main(
-  args.argv
+type Args = typeof args
 
-  // minimist(process.argv.slice(2), {
-  //   alias: {
-  //     help: ["h"],
-  //     input: ["i"],
-  //     output: ["o"]
-  //   }
-  // })
-)
+main(args).catch(err => log.error("Unknown exception occurred", err))
 
-interface Args {
-  i: string
-  o: string | undefined
-  p: string | undefined
-  e: string
-  f: string | undefined
-}
+// interface Args {
+//   d: boolean
+//   i: string
+//   o: string | undefined
+//   p: string | undefined
+//   e: string
+//   f: string | undefined
+// }
 
 function checkFileOrDir(param: string, filename: string, dir: boolean = false): boolean {
   if (!Sh.test("-e", filename) || (dir && !Sh.test("-d", filename))) {
@@ -87,8 +105,20 @@ function checkFileOrDir(param: string, filename: string, dir: boolean = false): 
   return !Sh.test("-d", filename)
 }
 
-async function main(args: Args) {
-  const { i: inputFile, o: outputDir, p: prettierFile, f: filterRegexStr, e: ext } = args
+async function main({
+  debug,
+  q: quiet,
+  v: verbose,
+  b: bailOnError,
+  i: inputFile,
+  o: outputDir,
+  p: prettierFile,
+  f: filterRegexStr,
+  e: ext,
+  d: dts
+}: Args) {
+  if (quiet) setLogThreshold(LogLevel.warn)
+  else if (debug) setLogThreshold(LogLevel.debug)
 
   const isFile = checkFileOrDir("inputFile", inputFile)
   const isDir = !isFile
@@ -111,6 +141,7 @@ async function main(args: Args) {
 
     //checkFileOrDir("prettierFile", resolved)
     prettierConfig = require(resolved)
+    log.debug("prettierConfig", prettierConfig)
   }
 
   const extFilter = new RegExp(ext),
@@ -119,15 +150,16 @@ async function main(args: Args) {
       ? [inputFile]
       : [
           ...sync(resolve(inputFile, "**", "*.*")).filter(
-            file => extFilter.test(file) && inputFilter.test(file) && !/node_modules/.test(file)
+            file => extFilter.test(file) && inputFilter.test(file) && !/node_modules/.test(file.replace(inputFile, ""))
           )
         ]
 
   for (const file of inputFiles) {
-    log.info("Converting", file, prettierConfig)
+    log.info("Converting", file)
+
     try {
       const inputCode = await readFile(file, "utf-8")
-      let { code: outputCode } = await compile(inputCode, inputFile)
+      let { code: outputCode } = await compile(inputCode, inputFile, dts)
       if (prettierConfig) {
         outputCode = prettier.format(outputCode, prettierConfig)
       }
@@ -135,7 +167,7 @@ async function main(args: Args) {
       if (hasOutput) {
         const outputCodeLower = outputCode.toLowerCase(),
           isJSX = ["jsx", "react", "render()"].some(term => outputCodeLower.includes(term)),
-          tsExt = isJSX ? ".tsx" : ".ts"
+          tsExt = dts ? ".d.ts" : isJSX ? ".tsx" : ".ts"
 
         const outputFile = file.replace(inputFile, outputDir!!).replace(extFilter, tsExt)
         const outputFileDir = outputFile.substr(0, outputFile.lastIndexOf(Path.sep))
@@ -148,7 +180,11 @@ async function main(args: Args) {
         log.info("Converted output", outputCode)
       }
     } catch (e) {
-      log.error(`Unable to process: ${file}`, e)
+      log.error(`Unable to process: ${file}`, ...(verbose ? [e] : []))
+
+      if (bailOnError) {
+        log.error(`Bailing on error from ${file}`)
+      }
     }
   }
 }

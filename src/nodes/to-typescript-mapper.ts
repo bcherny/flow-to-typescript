@@ -11,11 +11,9 @@ import {
   tsArrayType,
   tsAsExpression,
   tsBooleanKeyword,
-  tsIntersectionType,
   tsLiteralType,
   tsNullKeyword,
   tsNumberKeyword,
-  tsParenthesizedType,
   tsPropertySignature,
   tsStringKeyword,
   tsThisType,
@@ -27,15 +25,21 @@ import {
   tsTypeParameterDeclaration,
   tsTypeQuery,
   tsUndefinedKeyword,
-  tsUnionType,
   tsVoidKeyword,
   TypeCastExpression,
   TypeParameter,
   TypeParameterDeclaration
 } from "@babel/types"
 import { getValue } from "typeguard"
-import { functionToTsType, genericTypeAnnotationToTS, toTsIndexer } from "./basic-converters"
 import { getId, hasBound, isObjectTypeProperty } from "../utils"
+import {
+  functionToTsType,
+  genericTypeAnnotationToTS,
+  intersectionToTsType,
+  toTsIndexer,
+  toTsTypes,
+  unionToTsType
+} from "./basic-converters"
 
 export type Flow = DefaultFlow // | NumericLiteralTypeAnnotation
 
@@ -171,15 +175,7 @@ export function toTsType(node: any & FlowType): TSType | null {
     case "GenericTypeAnnotation":
       return genericTypeAnnotationToTS(node as any)
     case "IntersectionTypeAnnotation":
-      return tsIntersectionType(
-        node.types.map((type: any) => {
-          let tsType = toTsType(type) as any
-          if (type.type === "FunctionTypeAnnotation" && tsType.typeAnnotation) {
-            tsType = tsParenthesizedType(tsType)
-          }
-          return tsType
-        })
-      )
+      return intersectionToTsType(node)
     // node.types.map(toTsType))
     case "ExistsTypeAnnotation":
     case "MixedTypeAnnotation":
@@ -187,7 +183,7 @@ export function toTsType(node: any & FlowType): TSType | null {
     case "NullLiteralTypeAnnotation":
       return tsNullKeyword()
     case "NullableTypeAnnotation":
-      return tsUnionType([toTsType(node.typeAnnotation)!!, tsNullKeyword(), tsUndefinedKeyword()])
+      return unionToTsType([toTsType(node.typeAnnotation)!!, tsNullKeyword(), tsUndefinedKeyword()])
     case "NumberLiteralTypeAnnotation":
       return tsLiteralType(numericLiteral(node.value!))
     case "NumberTypeAnnotation":
@@ -199,7 +195,7 @@ export function toTsType(node: any & FlowType): TSType | null {
     case "ThisTypeAnnotation":
       return tsThisType()
     case "TupleTypeAnnotation":
-      return tsTupleType(node.types.map(toTsType))
+      return tsTupleType(toTsTypes(node.types))
     case "TypeofTypeAnnotation":
       return tsTypeQuery(getId(node.argument))
     case "ObjectTypeAnnotation":
@@ -221,19 +217,14 @@ export function toTsType(node: any & FlowType): TSType | null {
         ...(!typeAnno.indexers ? [] : typeAnno.indexers.map(indexer => toTsIndexer(indexer)))
       ]) as any
     case "UnionTypeAnnotation":
-      return tsUnionType(
-        node.types.map((type: any) => {
-          let tsType = toTsType(type) as any
-          if (type.type === "FunctionTypeAnnotation" && tsType.typeAnnotation) {
-            tsType = tsParenthesizedType(tsType)
-          }
-          return tsType
-        })
-      )
+      return unionToTsType(node)
     case "VoidTypeAnnotation":
       return tsVoidKeyword()
   }
 
-  if (node.type && node.type.startsWith("TS")) return node
-  else throw "wtf"
+  if (node.type && node.type.startsWith("TS")) {
+    return node
+  } else {
+    throw "wtf"
+  }
 }

@@ -4,12 +4,18 @@ import {
   identifier,
   Identifier,
   InterfaceExtends,
+  IntersectionTypeAnnotation,
   isTSTypeParameter,
+  Node,
   objectTypeIndexer,
   ObjectTypeIndexer,
   tsExpressionWithTypeArguments,
   tsFunctionType,
   TSFunctionType,
+  tsIntersectionType,
+  TSIntersectionType,
+  tsParenthesizedType,
+  TSType,
   tsTypeAnnotation,
   tsTypeParameter,
   tsTypeParameterDeclaration,
@@ -17,7 +23,10 @@ import {
   TSTypeParameterInstantiation,
   tsTypeReference,
   TSTypeReference,
-  TypeParameterInstantiation
+  tsUnionType,
+  TSUnionType,
+  TypeParameterInstantiation,
+  UnionTypeAnnotation
 } from "@babel/types"
 import { getValue, isDefined, isString } from "typeguard"
 import { KVMap } from "../types/types"
@@ -80,6 +89,35 @@ export function genericTypeAnnotationToTS(node: GenericTypeAnnotation | null): T
       name: subName
     })
   }
+}
+
+export function intersectionToTsType(node: IntersectionTypeAnnotation): TSIntersectionType {
+  return tsIntersectionType(
+    node.types.map((type: any) => {
+      let tsType = toTsType(type) as any
+      if (type.type === "FunctionTypeAnnotation" && tsType.typeAnnotation) {
+        tsType = tsParenthesizedType(tsType)
+      }
+      return tsType
+    })
+  )
+}
+
+export function toTsTypes(types: Array<Node>): Array<TSType> {
+  return types.map((type: any) => {
+    let tsType = toTsType(type) as any
+    if (type.type === "FunctionTypeAnnotation" && tsType.typeAnnotation) {
+      tsType = tsParenthesizedType(tsType)
+    }
+    return tsType
+  })
+}
+
+export function unionToTsType(types: Array<Node>): TSUnionType
+export function unionToTsType(node: UnionTypeAnnotation): TSUnionType
+export function unionToTsType(nodeOrTypes: UnionTypeAnnotation | Array<Node>): TSUnionType {
+  const types = Array.isArray(nodeOrTypes) ? nodeOrTypes : nodeOrTypes.types
+  return tsUnionType(toTsTypes(types))
 }
 
 export function functionToTsType(node: FunctionTypeAnnotation): TSFunctionType {

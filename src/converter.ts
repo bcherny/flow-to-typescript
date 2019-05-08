@@ -3,7 +3,7 @@ import "./nodes"
 import { parse } from "@babel/parser"
 import generate from "@babel/generator"
 import traverse from "@babel/traverse"
-import { Node } from "@babel/types"
+import { FunctionDeclaration, Node } from "@babel/types"
 import { File } from "@babel/types"
 import { sync } from "glob"
 import { dropWhile, pullAt } from "lodash"
@@ -17,10 +17,11 @@ import { CompileResult, Warning } from "./types"
  * [code, ast, warnings]
  * @param {string} code
  * @param {string} filename
+ * @param dts
  * @returns {Promise<[ast, warnings, code]>}
  */
-export async function compile(code: string, filename: string): Promise<CompileResult> {
-  const inputAst = parse(code, {
+export async function compile(code: string, filename: string, dts: boolean = false): Promise<CompileResult> {
+  let inputAst = parse(code, {
     plugins: [
       ["flow", { all: true }],
       ["decorators-legacy", { legacy: true }],
@@ -40,6 +41,10 @@ export async function compile(code: string, filename: string): Promise<CompileRe
     sourceType: "module"
   })
 
+  if (dts) {
+    inputAst = convertToDeclaration(inputAst)
+  }
+
   const [warnings, ast] = await convert(inputAst)
 
   warnings.forEach(([message, issueURL, line, column]) => {
@@ -56,6 +61,33 @@ export async function compile(code: string, filename: string): Promise<CompileRe
     outputAst: ast,
     warnings
   }
+}
+
+export function convertToDeclaration<T extends Node>(ast: T): T {
+  traverse(ast, {
+    ClassProperty(path) {
+      if (path.node.value) {
+        delete path.node.value
+      }
+    },
+    ClassMethod(path) {
+      if (path.node.body) {
+        delete path.node.body
+      }
+    },
+    FunctionDeclaration(path) {
+      const node = path.node as FunctionDeclaration
+      if (path.node.body) {
+        delete path.node.body
+      }
+
+      if (node.params) {
+        node.params = node.params.map(param => (param.type === "AssignmentPattern" ? param.left : param))
+      }
+    }
+  })
+
+  return ast
 }
 
 /**
@@ -77,7 +109,10 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
 }
 
 function stripAtFlowAnnotation(ast: File): File {
-  const firstElement = ast.program.body[0]
+  const { body, directives } = ast.program
+  if (directives) delete ast.program.directives
+
+  const firstElement = body[0]
   if (firstElement && firstElement.leadingComments) {
     let { leadingComments } = firstElement
     if (leadingComments) {

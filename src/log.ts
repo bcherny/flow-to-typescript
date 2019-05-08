@@ -1,23 +1,34 @@
 import * as _ from "lodash"
 
-export interface Logger {
-  debug(...args: any[]): void
+export enum LogLevel {
+  debug,
+  info,
+  warn,
+  error
+}
 
-  info(...args: any[]): void
+let threshold = LogLevel.info
 
-  warn(...args: any[]): void
+export type LogLevelName = keyof typeof LogLevel
 
-  error(...args: any[]): void
+export type Logger = { [level in LogLevelName]: (...args: any[]) => void }
+
+export function setLogThreshold(level: LogLevel) {
+  threshold = level
 }
 
 export function getLogger(filename: string): Logger {
-  const levels = ["debug", "info", "warn", "error"]
+  const levels: Array<LogLevelName> = ["debug", "info", "warn", "error"]
   const name = _.last(filename.split("/"))
   return levels.reduce(
     (logger, level) => {
       logger[level] = (...args: any) => {
+        if (LogLevel[level] < threshold) {
+          return
+        }
+
         const consoleRef = (console as any)[level].bind(console)
-        consoleRef(`[${name}]: `, ...args)
+        consoleRef(`[${name}] (${level}): `, ...args)
       }
 
       return logger

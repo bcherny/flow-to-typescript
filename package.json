@@ -70,6 +70,7 @@
     "@types/mz": "^0.0.32",
     "@types/prettier": "^1.16.3",
     "@types/shelljs": "^0.8.5",
+    "@typescript-eslint/typescript-estree": "^1.7.0",
     "ansicolor": "^1.1.83",
     "ava": "^0.24.0",
     "concurrently": "^3.5.1",

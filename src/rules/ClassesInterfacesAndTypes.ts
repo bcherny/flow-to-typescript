@@ -6,6 +6,7 @@ import {
   DeclareModule,
   DeclareTypeAlias,
   DeclareVariable,
+  ExportNamedDeclaration,
   FunctionTypeAnnotation,
   InterfaceDeclaration,
   InterfaceExtends,
@@ -56,7 +57,13 @@ addRule<
   | DeclareClass
   | InterfaceDeclaration
   | TypeAlias
+  | ExportNamedDeclaration
 >("ClassesInterfacesAndTypes | DeclareTypeAlias", () => ({
+  ExportNamedDeclaration(path: any) {
+    if (path.node.exportKind === "type") {
+      delete path.node.exportKind
+    }
+  },
   DeclareModule(path: any) {
     const newNode = {
       ...path.node,
