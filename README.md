@@ -78,7 +78,7 @@ compile(file, path).then(ts =>
 |       | Keys        | `$Keys<A>`                              | `keyof A` |
 |       | Values      | `$Values<A>`                            | `A[keyof A]` |
 |   ✅  | ReadOnly    | `$ReadOnly<A>`                          | `Readonly<A>` |
-|   ✅  | Exact       | `$Exact<A>`                             | `A` |
+|   ✅  | Exact       | `$Exact<A>`                             | `A` ( warn - vote for https://github.com/microsoft/TypeScript/issues/12936) |
 |       | Difference  | `$Diff<A, B>`                           | TODO` |
 |       | Rest        | `$Rest<A, B>`                           | `Exclude` |
 |       | Property type | `$PropertyType<T, k>`                 | `T[k]` |
