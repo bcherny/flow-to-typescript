@@ -4,10 +4,19 @@ type C = boolean;
 type D = number;
 type E = string;
 type F = string | null | undefined;
-type G = { a: number;
+type G = {
+  a: number;
 };
-type H = { a: number;,
-  b: string | null | undefined;,
+type H = {
+  a: number;
+  // comment
+  b: string | null | undefined;
 };
-type I = { a: <T extends number, U>(b: T, c: U | number) => T;
+type I = {
+  a: <T extends number, U>(b: T, c: U | number) => T;
+};
+type J = {
+  a: string;
+} & H & {
+  c: string;
 };

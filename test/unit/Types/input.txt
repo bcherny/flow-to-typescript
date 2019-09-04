@@ -10,9 +10,14 @@ type G = {
   a: number
 }
 type H = {
-  a: number,
+  a: number, // comment
   b: ?string
 }
 type I = {
   a<T: number, U>(b: T, c: U | number): T;
+}
+type J = {
+  a: string,
+  ...H,
+  ...{c: string}
 }

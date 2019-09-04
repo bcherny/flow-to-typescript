@@ -1,4 +1,4 @@
-import { parse } from '@babel/babylon'
+import { parse } from '@babel/parser'
 import generate from '@babel/generator'
 import traverse, { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
@@ -20,12 +20,11 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  let [warnings, ast] = await convert(
-    parse(code, {
-      plugins: ['classProperties', 'flow', 'objectRestSpread'],
-      sourceType: 'module'
-    })
-  )
+  const parsed = parse(code, {
+    plugins: ['classProperties', 'flow', 'objectRestSpread'],
+    sourceType: 'module'
+  })
+  let [warnings, ast] = await convert(parsed)
 
   warnings.forEach(([message, issueURL, line, column]) => {
     console.log(
@@ -51,7 +50,35 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   )
 
   let warnings: Warning[] = []
-  rules.forEach(visitor => traverse(ast, visitor(warnings)))
+  const order = [
+    '$Keys',
+    'Bounds',
+    'Casting',
+    'Exact',
+    'Variance',
+    'Indexer',
+    'TypeAlias'
+  ]
+  const keys = [...rules.keys()]
+  const all = [...order, ...keys.filter(k => order.indexOf(k) < 0)]
+  const visitor: { [key: string]: any } = {}
+  all.forEach(i => {
+    const visGen = rules.get(i)!
+    if (!visGen) return
+    const vis = visGen(warnings)
+    Object.keys(vis).forEach(k => {
+      if (!visitor[k]) {
+        visitor[k] = (vis as any)[k]
+      } else {
+        const oldVis = visitor[k]
+        visitor[k] = (...args: any[]) => {
+          oldVis(...args)
+          ;(vis as any)[k](...args)
+        }
+      }
+    })
+  })
+  traverse(ast, visitor)
 
   return [warnings, ast]
 }
